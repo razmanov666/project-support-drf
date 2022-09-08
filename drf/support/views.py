@@ -3,7 +3,9 @@ from rest_framework.generics import RetrieveUpdateAPIView
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from support.models import Comment
 from support.models import Ticket
+from support.serializers import CommentSerializer
 from support.serializers import TicketSerializer
 
 
@@ -20,15 +22,28 @@ class AllTicketAPIList(ListCreateAPIView):
     pagination_class = TicketAPIListPagination
 
 
-class UnsolvedTicketAPIList(AllTicketAPIList):
-    queryset = Ticket.objects.filter(is_solved=False)
+# class UnsolvedTicketAPIList(AllTicketAPIList):
+#     queryset = Ticket.objects.filter(is_solved=False)
 
 
-class SolvedTicketAPIList(AllTicketAPIList):
-    queryset = Ticket.objects.filter(is_solved=True)
+# class SolvedTicketAPIList(AllTicketAPIList):
+#     queryset = Ticket.objects.filter(is_solved=True)
+
+
+class AllCommentAPIList(ListCreateAPIView):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+    pagination_class = TicketAPIListPagination
 
 
 class TicketAPIUpdate(RetrieveUpdateAPIView):
     queryset = Ticket.objects.all()
     serializer_class = TicketSerializer
+    permission_classes = (IsAuthenticated,)
+
+
+class CommentAPIUpdate(RetrieveUpdateAPIView):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
     permission_classes = (IsAuthenticated,)
