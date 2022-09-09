@@ -1,6 +1,7 @@
 from django.urls import path
 from support.views import AllCommentAPIList
 from support.views import AllTicketAPIList
+from support.views import TicketAPIDestroy
 from support.views import TicketAPIUpdate
 
 # from support.views import CommentAPIUpdate
@@ -22,5 +23,6 @@ urlpatterns = [
     # ),
     path("api/tickets/<int:pk>/", TicketAPIUpdate.as_view()),
     path("api/tickets/<int:pk>/comments/", AllCommentAPIList.as_view()),
+    path("api/tickets_destroy/<int:pk>/", TicketAPIDestroy.as_view()),
     # path("api/tickets/<int:pk>/comments/", CommentAPIUpdate.as_view()),
 ]

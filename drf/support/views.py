@@ -1,4 +1,5 @@
 from rest_framework.generics import ListCreateAPIView
+from rest_framework.generics import RetrieveDestroyAPIView
 from rest_framework.generics import RetrieveUpdateAPIView
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
@@ -38,6 +39,12 @@ class AllCommentAPIList(ListCreateAPIView):
 
 
 class TicketAPIUpdate(RetrieveUpdateAPIView):
+    queryset = Ticket.objects.all()
+    serializer_class = TicketSerializer
+    permission_classes = (IsAuthenticated,)
+
+
+class TicketAPIDestroy(RetrieveDestroyAPIView):
     queryset = Ticket.objects.all()
     serializer_class = TicketSerializer
     permission_classes = (IsAuthenticated,)
