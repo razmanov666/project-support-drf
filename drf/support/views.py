@@ -23,14 +23,6 @@ class AllTicketAPIList(ListCreateAPIView):
     pagination_class = TicketAPIListPagination
 
 
-# class UnsolvedTicketAPIList(AllTicketAPIList):
-#     queryset = Ticket.objects.filter(is_solved=False)
-
-
-# class SolvedTicketAPIList(AllTicketAPIList):
-#     queryset = Ticket.objects.filter(is_solved=True)
-
-
 class AllCommentAPIList(ListCreateAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
@@ -41,7 +33,8 @@ class AllCommentAPIList(ListCreateAPIView):
 class TicketAPIUpdate(RetrieveUpdateAPIView):
     queryset = Ticket.objects.all()
     serializer_class = TicketSerializer
-    permission_classes = (IsAuthenticated,)
+    lookup_url_kwarg = "pk"
+    # permission_classes = (IsAuthenticated,)
 
 
 class TicketAPIDestroy(RetrieveDestroyAPIView):
@@ -54,3 +47,11 @@ class CommentAPIUpdate(RetrieveUpdateAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     permission_classes = (IsAuthenticated,)
+
+
+# class UnsolvedTicketAPIList(AllTicketAPIList):
+#     queryset = Ticket.objects.filter(is_solved=False)
+
+
+# class SolvedTicketAPIList(AllTicketAPIList):
+#     queryset = Ticket.objects.filter(is_solved=True)
