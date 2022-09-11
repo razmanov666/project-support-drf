@@ -17,15 +17,6 @@ class CommentSerializer(serializers.ModelSerializer):
         # extra_kwargs = {"pk": {""}}
 
 
-# class UserSerializer(serializers.ModelSerializer):
-#     tickets = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-#     comments = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-
-#     class Meta:
-#         model = User
-#         fields = "__all__"
-
-
 class TicketSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
     status = Status.objects.get(pk=3)
