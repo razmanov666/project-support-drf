@@ -22,7 +22,7 @@ class CommentAPIUpdate(RetrieveUpdateAPIView):
     permission_classes = (IsAuthenticated,)
 
 
-class AllCommentAPIList(ListCreateAPIView):
+class CommentAPIList(ListCreateAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
