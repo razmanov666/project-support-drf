@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "support.apps.SupportConfig",
+    "comment.apps.CommentConfig",
     "rest_framework",
 ]
 
