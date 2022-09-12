@@ -26,7 +26,7 @@ class TicketAPIList(ListCreateAPIView):
 class TicketAPIUpdate(RetrieveUpdateAPIView):
     queryset = Ticket.objects.all()
     serializer_class = TicketSerializerUpdate
-    lookup_url_kwarg = "pk"
+    # lookup_url_kwarg = "pk"
     # permission_classes = (IsAuthenticated,)
 
 

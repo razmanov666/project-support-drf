@@ -7,6 +7,8 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 from .models import Comment
 
+# from rest_framework.response import Response
+
 # from rest_framework.generics import RetrieveDestroyAPIView
 
 
@@ -27,3 +29,10 @@ class CommentAPIList(ListCreateAPIView):
     serializer_class = CommentSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
     pagination_class = CommentAPIListPagination
+
+    def get_queryset(self, *args, **kwargs):
+        return (
+            super()
+            .get_queryset(*args, **kwargs)
+            .filter(ticket_id=self.kwargs["ticket_pk"])
+        )

@@ -6,7 +6,7 @@ from .models import Ticket
 
 class TicketSerializerUpdate(serializers.ModelSerializer):
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
-    status = Status.objects.get(pk=1)
+    status = Status.objects.get(status="Unsolved")
 
     class Meta:
         model = Ticket
@@ -14,4 +14,6 @@ class TicketSerializerUpdate(serializers.ModelSerializer):
 
 
 class TicketSerializerCreate(TicketSerializerUpdate):
-    status = serializers.HiddenField(default=Status.objects.get(pk=1))
+    status = serializers.HiddenField(
+        default=Status.objects.get(status="Unsolved")
+    )
