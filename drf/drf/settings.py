@@ -38,7 +38,9 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "support.apps.SupportConfig",
+    # "support.apps.SupportConfig",
+    "comment.apps.CommentConfig",
+    "ticket.apps.TicketConfig",
     "rest_framework",
 ]
 
