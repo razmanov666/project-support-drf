@@ -2,12 +2,13 @@ from rest_framework.generics import ListCreateAPIView
 from rest_framework.generics import RetrieveDestroyAPIView
 from rest_framework.generics import RetrieveUpdateAPIView
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from ticket.permissions import IsOwnerOrAdminOrSupport
 from ticket.serializers import TicketSerializerCreate
 from ticket.serializers import TicketSerializerUpdate
 
 from .models import Ticket
+
+# from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 
 class TicketAPIListPagination(PageNumberPagination):
@@ -19,8 +20,9 @@ class TicketAPIListPagination(PageNumberPagination):
 class TicketAPIList(ListCreateAPIView):
     queryset = Ticket.objects.all()
     serializer_class = TicketSerializerCreate
-    permission_classes = (IsAuthenticatedOrReadOnly,)
+    permission_classes = (IsOwnerOrAdminOrSupport,)
     pagination_class = TicketAPIListPagination
+    lookup_url_kwarg = "ticket_pk"
 
 
 class TicketAPIUpdate(RetrieveUpdateAPIView):
@@ -33,4 +35,5 @@ class TicketAPIUpdate(RetrieveUpdateAPIView):
 class TicketAPIDestroy(RetrieveDestroyAPIView):
     queryset = Ticket.objects.all()
     serializer_class = TicketSerializerCreate
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsOwnerOrAdminOrSupport,)
+    lookup_url_kwarg = "ticket_pk"
