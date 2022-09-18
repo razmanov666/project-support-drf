@@ -23,6 +23,13 @@ class CommentAPIUpdate(RetrieveUpdateAPIView):
     serializer_class = CommentSerializer
     permission_classes = (IsAuthenticated,)
 
+    def get_queryset(self, *args, **kwargs):
+        return (
+            super()
+            .get_queryset(*args, **kwargs)
+            .filter(ticket_id=self.kwargs["ticket_pk"])
+        )
+
 
 class CommentAPIList(ListCreateAPIView):
     queryset = Comment.objects.all()
