@@ -8,15 +8,11 @@ class CurrentTicketDefault:
     requires_context = True
 
     def __call__(self, serializer_field):
-        # print(serializer_field.context['request'].build_absolute_uri().split('/'))
         return Ticket.objects.get(
-            pk=serializer_field.context["request"]
-            .build_absolute_uri()
-            .split("/")[5]
+            pk=serializer_field.context["request"].parser_context["kwargs"][
+                "ticket_pk"
+            ]
         )
-
-    def __repr__(self):
-        return "%s()" % self.__class__.__name__
 
 
 class CommentSerializer(serializers.ModelSerializer):
