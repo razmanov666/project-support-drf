@@ -8,7 +8,7 @@ from ticket.serializers import TicketSerializerUpdate
 
 from .models import Ticket
 
-# from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticated
 
 
 class TicketAPIListPagination(PageNumberPagination):
@@ -20,9 +20,17 @@ class TicketAPIListPagination(PageNumberPagination):
 class TicketAPIList(ListCreateAPIView):
     queryset = Ticket.objects.all()
     serializer_class = TicketSerializerCreate
-    permission_classes = (IsOwnerOrAdminOrSupport,)
+    permission_classes = (IsAuthenticated,)
     pagination_class = TicketAPIListPagination
     lookup_url_kwarg = "ticket_pk"
+
+    def get_queryset(self, *args, **kwargs):
+        print(dir(self.request))
+        return (
+            super()
+            .get_queryset(*args, **kwargs)
+            .filter(user=self.request.user)
+        )
 
 
 class TicketAPIUpdate(RetrieveUpdateAPIView):
@@ -31,9 +39,26 @@ class TicketAPIUpdate(RetrieveUpdateAPIView):
     lookup_url_kwarg = "ticket_pk"
     # permission_classes = (IsAuthenticated,)
 
+    def get_queryset(self, *args, **kwargs):
+        print(dir(self.request))
+        return (
+            super()
+            .get_queryset(*args, **kwargs)
+            .filter(user=self.request.user)
+        )
+
 
 class TicketAPIDestroy(RetrieveDestroyAPIView):
     queryset = Ticket.objects.all()
     serializer_class = TicketSerializerCreate
     permission_classes = (IsOwnerOrAdminOrSupport,)
     lookup_url_kwarg = "ticket_pk"
+
+
+    def get_queryset(self, *args, **kwargs):
+        print(dir(self.request))
+        return (
+            super()
+            .get_queryset(*args, **kwargs)
+            .filter(user=self.request.user)
+        )

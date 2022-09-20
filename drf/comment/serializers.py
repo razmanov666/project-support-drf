@@ -9,9 +9,9 @@ class CurrentTicketDefault:
 
     def __call__(self, serializer_field):
         return Ticket.objects.get(
-            pk=serializer_field.context["request"].parser_context["kwargs"][
-                "ticket_pk"
-            ]
+            pk=serializer_field.context["request"]
+            .parser_context["kwargs"]
+            .get("ticket_pk")
         )
 
 
