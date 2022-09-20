@@ -15,6 +15,8 @@ class Comment(models.Model):
     )
     time_create = models.DateTimeField(auto_now_add=True)
     time_update = models.DateTimeField(auto_now=True)
+    reply_to = models.ForeignKey(
+        "self", on_delete=models.CASCADE, blank=True, null=True)
 
     def __str__(self):
         return self.text
