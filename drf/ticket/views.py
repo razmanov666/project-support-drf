@@ -2,7 +2,7 @@ from rest_framework.generics import ListCreateAPIView
 from rest_framework.generics import RetrieveDestroyAPIView
 from rest_framework.generics import RetrieveUpdateAPIView
 from rest_framework.pagination import PageNumberPagination
-from ticket.permissions import IsOwnerOrAdminOrSupport
+from ticket.permissions import IsOwnerOrAdminOrSupport, IsOwner
 from ticket.serializers import TicketSerializerCreate
 from ticket.serializers import TicketSerializerUpdate
 
@@ -17,54 +17,35 @@ class TicketAPIListPagination(PageNumberPagination):
     max_page_size = 10000
 
 
-class TicketAPIList(ListCreateAPIView):
+class TicketAPIBase():
+    def get_queryset(self, *args, **kwargs):
+        if self.request.user.is_staff or self.request.user.is_superuser:
+            return super().get_queryset(*args, **kwargs)
+        else:
+            return (
+                super()
+                .get_queryset(*args, **kwargs)
+                .filter(user=self.request.user)
+        )
+
+
+class TicketAPIList(TicketAPIBase, ListCreateAPIView):
     queryset = Ticket.objects.all()
     serializer_class = TicketSerializerCreate
     permission_classes = (IsAuthenticated,)
     pagination_class = TicketAPIListPagination
     lookup_url_kwarg = "ticket_pk"
 
-    def get_queryset(self, *args, **kwargs):
-        if self.request.user.is_staff or self.request.user.is_superuser:
-            return super().get_queryset(*args, **kwargs)
-        else:
-            return (
-                super()
-                .get_queryset(*args, **kwargs)
-                .filter(user=self.request.user)
-        )
 
-
-class TicketAPIUpdate(RetrieveUpdateAPIView):
+class TicketAPIUpdate(TicketAPIBase, RetrieveUpdateAPIView):
     queryset = Ticket.objects.all()
     serializer_class = TicketSerializerUpdate
-    lookup_url_kwarg = "ticket_pk"
-    # permission_classes = (IsAuthenticated,)
-
-    def get_queryset(self, *args, **kwargs):
-        if self.request.user.is_staff or self.request.user.is_superuser:
-            return super().get_queryset(*args, **kwargs)
-        else:
-            return (
-                super()
-                .get_queryset(*args, **kwargs)
-                .filter(user=self.request.user)
-        )
-
-
-class TicketAPIDestroy(RetrieveDestroyAPIView):
-    queryset = Ticket.objects.all()
-    serializer_class = TicketSerializerCreate
     permission_classes = (IsOwnerOrAdminOrSupport,)
     lookup_url_kwarg = "ticket_pk"
 
 
-    def get_queryset(self, *args, **kwargs):
-        if self.request.user.is_staff or self.request.user.is_superuser:
-            return super().get_queryset(*args, **kwargs)
-        else:
-            return (
-                super()
-                .get_queryset(*args, **kwargs)
-                .filter(user=self.request.user)
-        )
+class TicketAPIDestroy(TicketAPIBase, RetrieveDestroyAPIView):
+    queryset = Ticket.objects.all()
+    serializer_class = TicketSerializerCreate
+    permission_classes = (IsOwnerOrAdminOrSupport,)
+    lookup_url_kwarg = "ticket_pk"
