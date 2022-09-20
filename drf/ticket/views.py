@@ -25,11 +25,13 @@ class TicketAPIList(ListCreateAPIView):
     lookup_url_kwarg = "ticket_pk"
 
     def get_queryset(self, *args, **kwargs):
-        print(dir(self.request))
-        return (
-            super()
-            .get_queryset(*args, **kwargs)
-            .filter(user=self.request.user)
+        if self.request.user.is_staff or self.request.user.is_superuser:
+            return super().get_queryset(*args, **kwargs)
+        else:
+            return (
+                super()
+                .get_queryset(*args, **kwargs)
+                .filter(user=self.request.user)
         )
 
 
@@ -40,11 +42,13 @@ class TicketAPIUpdate(RetrieveUpdateAPIView):
     # permission_classes = (IsAuthenticated,)
 
     def get_queryset(self, *args, **kwargs):
-        print(dir(self.request))
-        return (
-            super()
-            .get_queryset(*args, **kwargs)
-            .filter(user=self.request.user)
+        if self.request.user.is_staff or self.request.user.is_superuser:
+            return super().get_queryset(*args, **kwargs)
+        else:
+            return (
+                super()
+                .get_queryset(*args, **kwargs)
+                .filter(user=self.request.user)
         )
 
 
@@ -56,9 +60,11 @@ class TicketAPIDestroy(RetrieveDestroyAPIView):
 
 
     def get_queryset(self, *args, **kwargs):
-        print(dir(self.request))
-        return (
-            super()
-            .get_queryset(*args, **kwargs)
-            .filter(user=self.request.user)
+        if self.request.user.is_staff or self.request.user.is_superuser:
+            return super().get_queryset(*args, **kwargs)
+        else:
+            return (
+                super()
+                .get_queryset(*args, **kwargs)
+                .filter(user=self.request.user)
         )
