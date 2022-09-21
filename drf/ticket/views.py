@@ -2,13 +2,13 @@ from rest_framework.generics import ListCreateAPIView
 from rest_framework.generics import RetrieveDestroyAPIView
 from rest_framework.generics import RetrieveUpdateAPIView
 from rest_framework.pagination import PageNumberPagination
-from ticket.permissions import IsOwnerOrAdminOrSupport, IsOwner
+from rest_framework.permissions import IsAuthenticated
+from ticket.permissions import IsOwnerOrAdminOrSupport
+from ticket.serializers import AdminUserSerializer
+from ticket.serializers import SimpleUserSerializer
 from ticket.serializers import TicketSerializerCreate
-from ticket.serializers import TicketSerializerUpdate
 
 from .models import Ticket
-
-from rest_framework.permissions import IsAuthenticated
 
 
 class TicketAPIListPagination(PageNumberPagination):
@@ -17,7 +17,7 @@ class TicketAPIListPagination(PageNumberPagination):
     max_page_size = 10000
 
 
-class TicketAPIBase():
+class TicketAPIBase:
     def get_queryset(self, *args, **kwargs):
         if self.request.user.is_staff or self.request.user.is_superuser:
             return super().get_queryset(*args, **kwargs)
@@ -26,7 +26,7 @@ class TicketAPIBase():
                 super()
                 .get_queryset(*args, **kwargs)
                 .filter(user=self.request.user)
-        )
+            )
 
 
 class TicketAPIList(TicketAPIBase, ListCreateAPIView):
@@ -39,9 +39,13 @@ class TicketAPIList(TicketAPIBase, ListCreateAPIView):
 
 class TicketAPIUpdate(TicketAPIBase, RetrieveUpdateAPIView):
     queryset = Ticket.objects.all()
-    serializer_class = TicketSerializerUpdate
     permission_classes = (IsOwnerOrAdminOrSupport,)
     lookup_url_kwarg = "ticket_pk"
+
+    def get_serializer_class(self):
+        if self.request.user.is_staff or self.request.user.is_superuser:
+            return AdminUserSerializer
+        return SimpleUserSerializer
 
 
 class TicketAPIDestroy(TicketAPIBase, RetrieveDestroyAPIView):
