@@ -1,3 +1,4 @@
+from django.http import Http404
 from rest_framework.generics import ListCreateAPIView
 from rest_framework.generics import RetrieveDestroyAPIView
 from rest_framework.generics import RetrieveUpdateAPIView
@@ -21,12 +22,14 @@ class TicketAPIBase:
     def get_queryset(self, *args, **kwargs):
         if self.request.user.is_staff or self.request.user.is_superuser:
             return super().get_queryset(*args, **kwargs)
-        else:
+        elif not self.request.user.is_anonymous:
             return (
                 super()
                 .get_queryset(*args, **kwargs)
                 .filter(user=self.request.user)
             )
+        else:
+            raise Http404
 
 
 class TicketAPIList(TicketAPIBase, ListCreateAPIView):
@@ -45,7 +48,10 @@ class TicketAPIUpdate(TicketAPIBase, RetrieveUpdateAPIView):
     def get_serializer_class(self):
         if self.request.user.is_staff or self.request.user.is_superuser:
             return AdminUserSerializer
-        return SimpleUserSerializer
+        elif not self.request.user.is_anonymous:
+            return SimpleUserSerializer
+        else:
+            raise Http404
 
 
 class TicketAPIDestroy(TicketAPIBase, RetrieveDestroyAPIView):
