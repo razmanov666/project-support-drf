@@ -1,6 +1,6 @@
-from django.conf import settings
 from django.db import models
 from ticket.models import Ticket
+from userauth.models import CustomUser
 
 
 class Comment(models.Model):
@@ -10,7 +10,7 @@ class Comment(models.Model):
         on_delete=models.CASCADE,
     )
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
+        CustomUser,
         on_delete=models.CASCADE,
     )
     time_create = models.DateTimeField(auto_now_add=True)

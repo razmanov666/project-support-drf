@@ -1,5 +1,5 @@
-from django.conf import settings
 from django.db import models
+from userauth.models import CustomUser
 
 
 class Status(models.Model):
@@ -13,9 +13,9 @@ class Status(models.Model):
 class Ticket(models.Model):
     title = models.CharField(max_length=150)
     text = models.TextField()
-    status = models.ForeignKey(Status, on_delete=models.PROTECT, default=2)
+    status = models.ForeignKey(Status, on_delete=models.PROTECT)
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
+        CustomUser,
         on_delete=models.CASCADE,
     )
     time_create = models.DateTimeField(auto_now_add=True)
