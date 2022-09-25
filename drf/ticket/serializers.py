@@ -1,3 +1,4 @@
+from django.db.utils import OperationalError
 from rest_framework import serializers
 
 from .models import Status
@@ -32,6 +33,9 @@ class AdminUserSerializer(serializers.ModelSerializer):
 
 
 class TicketSerializerCreate(TicketSerializerUpdate):
-    status = serializers.HiddenField(
-        default=Status.objects.get(status="Unsolved")
-    )
+    try:
+        status = serializers.HiddenField(
+            default=Status.objects.get(status="Unsolved")
+        )
+    except OperationalError:
+        pass

@@ -1,3 +1,4 @@
+from django.core.mail import send_mail
 from rest_framework import serializers
 
 from .models import Comment
@@ -30,4 +31,12 @@ class CommentSerializer(serializers.ModelSerializer):
             text=validated_data["text"],
         )
         comment.save()
+        if comment.ticket.user != comment.user:
+            send_mail(
+                "Dear, " + str(comment.ticket.user),
+                "You are have update in your ticket.",
+                "app_notification@mail.ru",
+                [comment.ticket.user.email],
+                fail_silently=False,
+            )
         return comment
