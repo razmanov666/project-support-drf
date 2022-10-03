@@ -7,7 +7,7 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = list[tuple]
+    dependencies: list[str] = []
 
     operations = [
         migrations.CreateModel(
