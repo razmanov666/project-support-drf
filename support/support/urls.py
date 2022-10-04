@@ -1,4 +1,4 @@
-"""drf URL Configuration
+"""Support URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/4.1/topics/http/urls/
@@ -25,7 +25,7 @@ from userauth.views import RegisterView
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include("ticket.urls")),
-    path("api/drf-auth/", include("rest_framework.urls")),
+    path("api/support-auth/", include("rest_framework.urls")),
     path("api/auth/", include("djoser.urls")),
     re_path(r"^auth/", include("djoser.urls.authtoken")),
     path("api/token/", TokenObtainPairView.as_view()),

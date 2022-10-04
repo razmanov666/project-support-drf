@@ -1,4 +1,6 @@
 from comment.serializers import CommentSerializer
+from common_permissions.permissions import IsOwner
+from common_permissions.permissions import IsOwnerOrAdminOrSupport
 from django.db.models import Q
 from django.http import Http404
 from rest_framework.generics import ListCreateAPIView
@@ -6,8 +8,6 @@ from rest_framework.generics import RetrieveDestroyAPIView
 from rest_framework.generics import RetrieveUpdateAPIView
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
-from ticket.permissions import IsOwner
-from ticket.permissions import IsOwnerOrAdminOrSupport
 
 from .models import Comment
 
