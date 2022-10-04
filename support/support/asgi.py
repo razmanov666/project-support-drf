@@ -1,5 +1,5 @@
 """
-ASGI config for drf project.
+ASGI config for support project.
 
 It exposes the ASGI callable as a module-level variable named ``application``.
 
@@ -10,6 +10,6 @@ import os
 
 from django.core.asgi import get_asgi_application
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "drf.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "support.settings")
 
 application = get_asgi_application()
