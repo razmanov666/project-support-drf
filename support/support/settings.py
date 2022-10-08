@@ -197,3 +197,13 @@ EMAIL_HOST_USER = "app_notification@mail.ru"
 EMAIL_HOST_PASSWORD = "31M9Dyip8ePHStsMTxt0"
 EMAIL_USE_TLS = False
 EMAIL_USE_SSL = True
+
+# Redis
+REDIS_HOST = "0.0.0.0"
+REDIS_PORT = "6379"
+CELERY_BROKER_URL = "redis://" + REDIS_HOST + ":" + REDIS_PORT + "/0"
+CELERY_BROKER_TRANSPORT_OPTIONS = {"visability_timeout": 3600}
+CELERY_RESULT_BACKEND = "redis://" + REDIS_HOST + ":" + REDIS_PORT + "/0"
+CELERY_ACCEPT_CONTENT = ["application/json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"

@@ -11,6 +11,8 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 from .models import Comment
 
+# from .tasks import say_work
+
 # from rest_framework.response import Response
 
 
