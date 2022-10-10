@@ -1,0 +1,7 @@
+
+services:
+  rest-api:
+  postgres:
+  redis:
+  celery:
+  

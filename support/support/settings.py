@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 from datetime import timedelta
 from pathlib import Path
+from typing import List
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -27,7 +28,7 @@ SECRET_KEY = (
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS: list[str] = []
+ALLOWED_HOSTS: List[str] = []
 
 
 # Application definition
@@ -39,9 +40,9 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "comment.apps.CommentConfig",
-    "ticket.apps.TicketConfig",
-    "userauth.apps.UserauthConfig",
+    "support.comment.apps.CommentConfig",
+    "support.ticket.apps.TicketConfig",
+    "support.userauth.apps.UserauthConfig",
     "rest_framework",
     "rest_framework.authtoken",
     "rest_framework_simplejwt",
