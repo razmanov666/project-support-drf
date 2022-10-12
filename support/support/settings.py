@@ -40,13 +40,14 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "support.comment.apps.CommentConfig",
-    "support.ticket.apps.TicketConfig",
-    "support.userauth.apps.UserauthConfig",
+    "comment.apps.CommentConfig",
+    "ticket.apps.TicketConfig",
+    "userauth.apps.UserauthConfig",
     "rest_framework",
     "rest_framework.authtoken",
     "rest_framework_simplejwt",
     "djoser",
+    "django_extensions",
 ]
 
 MIDDLEWARE = [

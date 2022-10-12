@@ -3,23 +3,30 @@ from userauth.models import CustomUser
 
 
 class Status(models.Model):
-    status = models.CharField(max_length=150)
-    desc_status = models.TextField()
-
-    def __str__(self):
-        return self.status
+    opened = models.BooleanField(default=True)
+    in_progress = models.BooleanField()
+    in_review = models.BooleanField()
+    closed = models.BooleanField()
+    rejected = models.BooleanField()
+    on_hold = models.BooleanField()
 
 
 class Ticket(models.Model):
-    title = models.CharField(max_length=150)
-    text = models.TextField()
+    title = models.CharField(max_length=150, editable=False)
+    description = models.TextField()
     status = models.ForeignKey(Status, on_delete=models.PROTECT)
-    user = models.ForeignKey(
+    reporter = models.ForeignKey(
         CustomUser,
         on_delete=models.CASCADE,
+        editable=False,
+        related_name="customuser_id",
     )
-    time_create = models.DateTimeField(auto_now_add=True)
-    time_update = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True, editable=False)
+    updated_at = models.DateTimeField(auto_now=True)
+    assigned = models.ForeignKey(
+        CustomUser, on_delete=models.CASCADE, editable=False
+    )
+    comments = models.JSONField(null=True)
 
     def __str__(self):
         return self.title

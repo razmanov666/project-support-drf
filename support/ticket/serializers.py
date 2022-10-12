@@ -32,6 +32,4 @@ class AdminUserSerializer(serializers.ModelSerializer):
 
 
 class TicketSerializerCreate(TicketSerializerUpdate):
-    status = serializers.HiddenField(
-        default=Status.objects.filter(status="Unsolved")
-    )
+    status = Status.objects.all()

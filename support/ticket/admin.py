@@ -7,11 +7,11 @@ from .models import Ticket
 class TicketAdmin(admin.ModelAdmin):
     list_display = (
         "id",
-        "text",
+        "description",
         "status",
-        "time_create",
-        "time_update",
-        "user",
+        "created_at",
+        "updated_at",
+        "reporter",
     )
     # list_display_links = ("id", "title")
     # search_fields = ("title", "content")
