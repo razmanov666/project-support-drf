@@ -1,4 +1,4 @@
-FROM python:3.8.13 prod
+FROM python:3.10 as prod
 
 ENV PYTHONUNBUFFERED=1 \
     POETRY_HOME=/opt/poetry \
@@ -22,13 +22,14 @@ COPY support /app/support
 CMD make make-migrations && make migrate && make run-app
 
 
-FROM prod as test
+# FROM prod as test
 
-COPY tests/ /app/tests
+# COPY tests/ /app/tests
 
-RUN make install
+# RUN make install
 
-CMD make code-style-checks && make drf-tests
+# # CMD make code-style-checks && make drf-tests
+# CMD make drf-tests
 
 
 

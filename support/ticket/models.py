@@ -12,21 +12,18 @@ class Status(models.Model):
 
 
 class Ticket(models.Model):
-    title = models.CharField(max_length=150, editable=False)
+    title = models.CharField(max_length=150)
     description = models.TextField()
     status = models.ForeignKey(Status, on_delete=models.PROTECT)
     reporter = models.ForeignKey(
         CustomUser,
         on_delete=models.CASCADE,
-        editable=False,
         related_name="customuser_id",
     )
-    created_at = models.DateTimeField(auto_now_add=True, editable=False)
+    created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    assigned = models.ForeignKey(
-        CustomUser, on_delete=models.CASCADE, editable=False
-    )
-    comments = models.JSONField(null=True)
+    assigned = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    # comments = models.JSONField(null=True,)
 
     def __str__(self):
         return self.title

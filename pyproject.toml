@@ -11,6 +11,7 @@ python = "^3.10"
 Django = "^4.1.1"
 djangorestframework = "^3.14.0"
 djoser = "^2.1.0"
+psycopg2-binary = "^2.9.4"
 
 [tool.poetry.group.test.dependencies]
 pytest = "^7.1.3"
