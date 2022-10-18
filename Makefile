@@ -19,6 +19,11 @@ code-style-checks:
 drf-tests:
 	poetry run pytest --color=yes tests/
 
+full-migrate-and-run:
+	python support/manage.py makemigrations && 
+	python support/manage.py migrate && 
+	python support/manage.py runserver 0.0.0.0:8000
+
 # code-style-checks:
 # 	flake8 support/ tests/ && \
 # 	# isort --check-only support/ tests/ && \

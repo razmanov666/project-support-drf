@@ -18,11 +18,15 @@ class Ticket(models.Model):
     reporter = models.ForeignKey(
         CustomUser,
         on_delete=models.CASCADE,
-        related_name="customuser_id",
+        related_name='ticket_reporter'
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    assigned = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    assigned = models.ForeignKey(
+        CustomUser, 
+        on_delete=models.CASCADE,
+        related_name="ticket_assigned"
+    )
     # comments = models.JSONField(null=True,)
 
     def __str__(self):

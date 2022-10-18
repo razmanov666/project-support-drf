@@ -12,7 +12,7 @@ class CustomUser(AbstractUser):
         (ADMIN, "Admin"),
     ]
     first_name = models.CharField(max_length=255)
-    last_name = models.CharField(max_length=255)
+    second_name = models.CharField(max_length=255)
     email = models.EmailField(max_length=255)
     role = models.CharField(
         max_length=2, choices=ROLE_CHOICES, default=CLIENT, editable=False
