@@ -1,7 +1,8 @@
 from django.contrib import admin
 
-from .models import Status
 from .models import Ticket
+
+# from .models import Status
 
 
 class TicketAdmin(admin.ModelAdmin):
@@ -20,4 +21,4 @@ class TicketAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Ticket, TicketAdmin)
-admin.site.register(Status)
+# admin.site.register(Status)

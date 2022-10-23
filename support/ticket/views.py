@@ -23,11 +23,7 @@ class TicketAPIBase:
         if self.request.user.is_staff or self.request.user.is_superuser:
             return super().get_queryset(*args, **kwargs)
         elif not self.request.user.is_anonymous:
-            return (
-                super()
-                .get_queryset(*args, **kwargs)
-                .filter(user=self.request.user)
-            )
+            return super().get_queryset(*args, **kwargs).filter(reporter=self.request.user)
         else:
             raise Http404
 

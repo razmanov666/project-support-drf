@@ -1,20 +1,22 @@
 from rest_framework import serializers
 
-from .models import Status
 from .models import Ticket
+
+# from .models import Status
 
 
 class TicketSerializerUpdate(serializers.ModelSerializer):
-    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
-    status = Status.objects.all()
+    reporter = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    status = serializers.HiddenField(default="")
 
     class Meta:
         model = Ticket
         fields = "__all__"
+        read_only_fields = ("status", "assigned")
 
 
 class SimpleUserSerializer(serializers.ModelSerializer):
-    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    reporter = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
         model = Ticket
@@ -23,8 +25,8 @@ class SimpleUserSerializer(serializers.ModelSerializer):
 
 
 class AdminUserSerializer(serializers.ModelSerializer):
-    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
-    status = Status.objects.all()
+    reporter = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    # status = Status.objects.all()
 
     class Meta:
         model = Ticket
@@ -32,4 +34,11 @@ class AdminUserSerializer(serializers.ModelSerializer):
 
 
 class TicketSerializerCreate(TicketSerializerUpdate):
-    status = Status.objects.all()
+    reporter = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    status = serializers.HiddenField(default=Ticket.STATUS_CHOICES[0][0])
+    assigned = serializers.HiddenField(default=serializers.CurrentUserDefault())
+
+    # class Meta:
+    #     model = Ticket
+    #     fields = "__all__"
+    #     read_only_fields = ("assigned",)

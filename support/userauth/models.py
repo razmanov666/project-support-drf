@@ -7,16 +7,14 @@ class CustomUser(AbstractUser):
     SD_MANAGER = "MG"
     ADMIN = "AD"
     ROLE_CHOICES = [
-        (CLIENT, "CLient"),
-        (SD_MANAGER, "Sd_manager"),
+        (CLIENT, "Client"),
+        (SD_MANAGER, "SD manager"),
         (ADMIN, "Admin"),
     ]
     first_name = models.CharField(max_length=255)
     second_name = models.CharField(max_length=255)
     email = models.EmailField(max_length=255)
-    role = models.CharField(
-        max_length=2, choices=ROLE_CHOICES, default=CLIENT, editable=False
-    )
+    role = models.CharField(max_length=2, choices=ROLE_CHOICES, default=CLIENT)
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     updated_at = models.DateTimeField(auto_now=True)
 
