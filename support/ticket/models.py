@@ -31,8 +31,8 @@ class Ticket(models.Model):
         default=OPENED,
         editable=False,
     )
-    reporter = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="ticket_reporter")
-    created_at = models.DateTimeField(auto_now_add=True)
+    reporter = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="ticket_reporter", editable=False)
+    created_at = models.DateTimeField(auto_now_add=True, editable=False)
     updated_at = models.DateTimeField(auto_now=True)
     assigned = models.ForeignKey(
         CustomUser,

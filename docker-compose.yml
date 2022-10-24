@@ -26,15 +26,7 @@ services:
           memory: 4G
   web:
     build: .
-    command: bash -c "
-             python support/manage.py makemigrations userauth
-             && python support/manage.py makemigrations comment
-             && python support/manage.py makemigrations ticket
-             && python support/manage.py migrate userauth
-             && python support/manage.py migrate comment
-             && python support/manage.py migrate ticket
-             && python support/manage.py migrate
-             && python support/manage.py runserver 0.0.0.0:8000"
+    command: bash -c "make full-migrate-and-run"
     ports:
       - "8000:8000"
     environment:

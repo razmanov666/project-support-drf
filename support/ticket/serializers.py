@@ -36,9 +36,3 @@ class AdminUserSerializer(serializers.ModelSerializer):
 class TicketSerializerCreate(TicketSerializerUpdate):
     reporter = serializers.HiddenField(default=serializers.CurrentUserDefault())
     status = serializers.HiddenField(default=Ticket.STATUS_CHOICES[0][0])
-    assigned = serializers.HiddenField(default=serializers.CurrentUserDefault())
-
-    # class Meta:
-    #     model = Ticket
-    #     fields = "__all__"
-    #     read_only_fields = ("assigned",)
