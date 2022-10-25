@@ -26,6 +26,10 @@ full-migrate-and-run:
     python support/manage.py migrate && \
     python support/manage.py runserver 0.0.0.0:8000
 
+fake-migrate:
+	python support/manage.py migrate --fake
+
+
 # code-style-checks:
 # 	flake8 support/ tests/ && \
 # 	# isort --check-only support/ tests/ && \

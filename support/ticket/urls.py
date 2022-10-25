@@ -9,5 +9,5 @@ urlpatterns = [
     path("api/tickets/", TicketAPIList.as_view()),
     path("api/tickets/<int:ticket_pk>/", TicketAPIUpdate.as_view()),
     path("api/tickets_destroy/<int:ticket_pk>/", TicketAPIDestroy.as_view()),
-    path("api/tickets/<int:ticket_pk>/", include("comment.urls")),
+    # path("api/tickets/<int:ticket_pk>/", include("comment.urls")),
 ]
