@@ -7,12 +7,16 @@ from .models import Ticket
 
 class TicketSerializerUpdate(serializers.ModelSerializer):
     reporter = serializers.HiddenField(default=serializers.CurrentUserDefault())
-    status = serializers.HiddenField(default="")
 
     class Meta:
         model = Ticket
-        fields = "__all__"
-        read_only_fields = ("status", "assigned")
+        # fields = "__all__"
+        # read_only_fields = ("status", "assigned", "comments")
+        exclude = (
+            "status",
+            "assigned",
+            "comments",
+        )
 
 
 class SimpleUserSerializer(serializers.ModelSerializer):
@@ -20,8 +24,8 @@ class SimpleUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Ticket
-        fields = "__all__"
-        read_only_fields = ("status",)
+        # fields = "__all__"
+        exclude = ("status",)
 
 
 class AdminUserSerializer(serializers.ModelSerializer):
@@ -33,6 +37,23 @@ class AdminUserSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class TicketSerializerCreate(TicketSerializerUpdate):
+class TicketSerializerCreate(serializers.ModelSerializer):
     reporter = serializers.HiddenField(default=serializers.CurrentUserDefault())
     status = serializers.HiddenField(default=Ticket.STATUS_CHOICES[0][0])
+
+    class Meta:
+        model = Ticket
+        # fields = "__all__"
+        # read_only_fields = ("status", "assigned", "comments")
+        exclude = (
+            "assigned",
+            "comments",
+        )
+
+
+class TicketSerializerAddComment(serializers.ModelSerializer):
+    comments = serializers.JSONField()
+
+    class Meta:
+        model = Ticket
+        fields = ("comments",)

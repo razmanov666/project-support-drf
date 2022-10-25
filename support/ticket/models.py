@@ -41,7 +41,9 @@ class Ticket(models.Model):
         blank=True,
         null=True,
     )
-    # comments = models.JSONField(null=True,)
+    comments = models.JSONField(
+        null=True,
+    )
 
     def __str__(self):
         return self.title
