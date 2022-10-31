@@ -35,5 +35,19 @@ services:
       - POSTGRES_PASSWORD=123123
     depends_on:
       - postgres
-  # redis:
-  # celery:
+      - redis
+  redis:
+    image: redis:alpine
+  celery:
+    restart: always
+    build:
+      context: .
+    command: celery -A app/support worker -l info
+    volumes:
+      - ./app:/support
+    # env_file:
+    #   - ./.env.dev
+    depends_on:
+      - postgres
+      - redis
+      - web

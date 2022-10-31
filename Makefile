@@ -21,8 +21,8 @@ drf-tests:
 
 full-migrate-and-run:
 	python support/manage.py makemigrations userauth && \
-    python support/manage.py makemigrations && \
     python support/manage.py migrate userauth && \
+    python support/manage.py makemigrations && \
     python support/manage.py migrate && \
     python support/manage.py runserver 0.0.0.0:8000
 
