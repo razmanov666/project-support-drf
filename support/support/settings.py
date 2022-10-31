@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 from datetime import timedelta
 from pathlib import Path
+from typing import List
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,14 +21,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = (
-    "django-insecure-t+)^5*1syzvs=p%tiy324)zxz26$ra!+__8)y8=!hnyjn_cg3m"
-)
+SECRET_KEY = "django-insecure-t+)^5*1syzvs=p%tiy324)zxz26$ra!+__8)y8=!hnyjn_cg3m"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS: list[str] = []
+ALLOWED_HOSTS: List[str] = ["*"]
 
 
 # Application definition
@@ -39,7 +38,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "comment.apps.CommentConfig",
+    # "comment.apps.CommentConfig",
     "ticket.apps.TicketConfig",
     "userauth.apps.UserauthConfig",
     "rest_framework",
@@ -82,23 +81,23 @@ WSGI_APPLICATION = "support.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
-}
-
 # DATABASES = {
 #     "default": {
-#         "ENGINE": "django.db.backends.postgresql_psycopg2",
-#         "NAME": "support_db_",
-#         "USER": "my_admin_user",
-#         "PASSWORD": "ASDFGHJKl99",
-#         "HOST": "localhost",
-#         "PORT": "5432",
+#         "ENGINE": "django.db.backends.sqlite3",
+#         "NAME": BASE_DIR / "db.sqlite3",
 #     }
 # }
+
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "NAME": "support_app_db",
+        "USER": "alexey_razmanov",
+        "PASSWORD": "123123",
+        "HOST": "postgres",
+        "PORT": "5432",
+    }
+}
 
 
 # Password validation
@@ -106,20 +105,16 @@ DATABASES = {
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        "NAME": "django.contrib.auth.password_validation."
-        + "UserAttributeSimilarityValidator",
+        "NAME": "django.contrib.auth.password_validation." + "UserAttributeSimilarityValidator",
     },
     {
-        "NAME": "django.contrib.auth.password_validation."
-        + "MinimumLengthValidator",
+        "NAME": "django.contrib.auth.password_validation." + "MinimumLengthValidator",
     },
     {
-        "NAME": "django.contrib.auth.password_validation."
-        + "CommonPasswordValidator",
+        "NAME": "django.contrib.auth.password_validation." + "CommonPasswordValidator",
     },
     {
-        "NAME": "django.contrib.auth.password_validation."
-        + "NumericPasswordValidator",
+        "NAME": "django.contrib.auth.password_validation." + "NumericPasswordValidator",
     },
 ]
 
@@ -180,8 +175,7 @@ SIMPLE_JWT = {
     "AUTH_HEADER_NAME": "HTTP_AUTHORIZATION",
     "USER_ID_FIELD": "id",
     "USER_ID_CLAIM": "user_id",
-    "USER_AUTHENTICATION_RULE": "rest_framework_simplejwt.authentication."
-    + "default_user_authentication_rule",
+    "USER_AUTHENTICATION_RULE": "rest_framework_simplejwt.authentication." + "default_user_authentication_rule",
     "AUTH_TOKEN_CLASSES": ("rest_framework_simplejwt.tokens.AccessToken",),
     "TOKEN_TYPE_CLAIM": "token_type",
     "TOKEN_USER_CLASS": "rest_framework_simplejwt.models.TokenUser",
