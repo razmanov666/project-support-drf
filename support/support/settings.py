@@ -193,7 +193,7 @@ EMAIL_USE_TLS = False
 EMAIL_USE_SSL = True
 
 # Redis
-REDIS_HOST = "postgres"
+REDIS_HOST = "redis"
 REDIS_PORT = "6379"
 CELERY_BROKER_URL = "redis://" + REDIS_HOST + ":" + REDIS_PORT + "/0"
 CELERY_BROKER_TRANSPORT_OPTIONS = {"visability_timeout": 3600}
