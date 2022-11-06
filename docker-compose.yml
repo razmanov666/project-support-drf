@@ -2,11 +2,8 @@ version: "3.10"
 services:
   postgres:
     image: postgres:13.3
-    environment:
-      POSTGRES_HOST_AUTH_METHOD: "trust"
-      POSTGRES_DB: "support_app_db"
-      POSTGRES_USER: "alexey_razmanov"
-      POSTGRES_PASSWORD: "123123"
+    env_file:
+      - ./.env
     volumes:
       - .:/docker-entrypoint-initdb.d
     ports:
@@ -28,10 +25,8 @@ services:
     command: bash -c "make full-migrate-and-run"
     ports:
       - "8000:8000"
-    environment:
-      - POSTGRES_NAME=support_app_db
-      - POSTGRES_USER=alexey_razmanov
-      - POSTGRES_PASSWORD=123123
+    env_file:
+      - ./.env
     volumes:
       - .:/support
     depends_on:
@@ -49,10 +44,8 @@ services:
     # command: bash -c "celery -A tasks worker -l info"
     # env_file:
     #   - ./.env.dev
-    environment:
-      - POSTGRES_NAME=support_app_db
-      - POSTGRES_USER=alexey_razmanov
-      - POSTGRES_PASSWORD=123123
+    env_file:
+      - ./.env
     depends_on:
       - postgres
       - redis
