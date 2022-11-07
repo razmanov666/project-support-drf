@@ -11,7 +11,7 @@ WORKDIR /app
 RUN apt update && \
     apt install make
 
-COPY Makefile poetry.lock pyproject.toml /app/
+COPY Makefile poetry.lock pyproject.toml .env /app/
 
 RUN curl -sSL https://install.python-poetry.org | python3 -
 
