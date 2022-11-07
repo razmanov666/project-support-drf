@@ -19,7 +19,7 @@ RUN make install-prod
 
 COPY support /app/support
 
-CMD make make-migrations && make migrate && make run-app
+CMD make full-migrate-and-run
 
 
 # FROM prod as test

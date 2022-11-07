@@ -66,10 +66,12 @@ class TicketSerializerAddComment(serializers.ModelSerializer):
         fields = ("comments",)
 
     def update(self, instance, validated_data):
-        comments_exists = type(instance.comments) is not NoneType
+        comments_exists = (type(instance.comments) is not NoneType)
         id_comment = str(len(instance.comments) + 1) if comments_exists else "1"
         content = validated_data.get("comments", instance.comments)
         created_by = self.context["request"].user.username
+        print(type(instance.comments) != NoneType)
+        print('workwoRK')
         comment_dict = {
             id_comment: {
                 "content": content,

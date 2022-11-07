@@ -3,7 +3,7 @@ services:
   postgres:
     image: postgres:13.3
     env_file:
-      - ./.env
+      - ./support/.env
     volumes:
       - .:/docker-entrypoint-initdb.d
     ports:
@@ -26,7 +26,7 @@ services:
     ports:
       - "8000:8000"
     env_file:
-      - ./.env
+      - ./support/.env
     volumes:
       - .:/support
     depends_on:
@@ -45,7 +45,7 @@ services:
     # env_file:
     #   - ./.env.dev
     env_file:
-      - ./.env
+      - ./support/.env
     depends_on:
       - postgres
       - redis
