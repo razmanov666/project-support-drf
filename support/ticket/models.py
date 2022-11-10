@@ -43,6 +43,7 @@ class Ticket(models.Model):
     )
     comments = models.JSONField(
         null=True,
+        blank=True,
     )
 
     # def __str__(self):

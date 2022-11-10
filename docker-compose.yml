@@ -3,11 +3,9 @@ services:
   postgres:
     image: postgres:13.3
     environment:
-      - POSTGRES_HOST_AUTH_METHOD: ${POSTGRES_HOST_AUTH_METHOD}
-      - POSTGRES_DB: ${POSTGRES_DB}
-      - POSTGRES_USER: ${POSTGRES_USER}
-      - POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    env_file: ./support/.env
+      - POSTGRES_DB=$POSTGRES_DB
+      - POSTGRES_USER=$POSTGRES_USER
+      - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
     volumes:
       - .:/docker-entrypoint-initdb.d
     ports:
@@ -27,15 +25,12 @@ services:
   web:
     build: .
     command: bash -c "make full-migrate-and-run"
-    environment:
-      - POSTGRES_NAME: ${POSTGRES_DB}
-      - POSTGRES_USER: ${POSTGRES_USER}
-      - POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    env_file: ./support/.env
     ports:
       - "8000:8000"
-    # env_file:
-    #   - ./support/.env
+    # environment:
+    #   - POSTGRES_NAME=$POSTGRES_DB
+    #   - POSTGRES_USER=$POSTGRES_USER
+    #   - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
     volumes:
       - .:/support
     depends_on:
@@ -50,14 +45,10 @@ services:
     build:
       context: .
     command: bash -c "cd support && celery -A support worker -l info"
-    environment:
-      - POSTGRES_NAME: ${POSTGRES_DB}
-      - POSTGRES_USER: ${POSTGRES_USER}
-      - POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    env_file:
-      - ./support/.env
-    # env_file:
-    #   - ./support/.env
+    # environment:
+    #   - POSTGRES_NAME=$POSTGRES_DB
+    #   - POSTGRES_USER=$POSTGRES_USER
+    #   - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
     depends_on:
       - postgres
       - redis
