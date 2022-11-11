@@ -1,6 +1,6 @@
 from support.celery import app
-
+from ticket.service import send_mail_update_comments
 
 @app.task
-def add(x, y):
-    print(x + y)
+def send_email(object):
+    send_mail_update_comments(object)

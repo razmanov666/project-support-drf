@@ -27,10 +27,6 @@ services:
     command: bash -c "make full-migrate-and-run"
     ports:
       - "8000:8000"
-    # environment:
-    #   - POSTGRES_NAME=$POSTGRES_DB
-    #   - POSTGRES_USER=$POSTGRES_USER
-    #   - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
     volumes:
       - .:/support
     depends_on:
@@ -45,10 +41,6 @@ services:
     build:
       context: .
     command: bash -c "cd support && celery -A support worker -l info"
-    # environment:
-    #   - POSTGRES_NAME=$POSTGRES_DB
-    #   - POSTGRES_USER=$POSTGRES_USER
-    #   - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
     depends_on:
       - postgres
       - redis
