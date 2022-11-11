@@ -11,7 +11,7 @@ app.autodiscover_tasks()
 
 app.conf.beat_shedule = {
     "check-ticket-for-autofrozen": {
-        "task": "comment.tasks.autofrozen",
+        "task": "ticket.tasks.autofrozen",
         "schedule": crontab(minute="*/5"),
     }
 }

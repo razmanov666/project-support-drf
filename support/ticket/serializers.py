@@ -8,11 +8,11 @@ import json
 
 
 class TicketSerializerUpdate(serializers.ModelSerializer):
-    reporter = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
         model = Ticket
         exclude = (
+            "reporter",
             "title",
             "status",
             "assigned",
@@ -21,11 +21,11 @@ class TicketSerializerUpdate(serializers.ModelSerializer):
 
 
 class SimpleUserSerializer(serializers.ModelSerializer):
-    reporter = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
         model = Ticket
         exclude = (
+            "reporter",
             "title",
             "status",
             "assigned",
@@ -34,18 +34,19 @@ class SimpleUserSerializer(serializers.ModelSerializer):
 
 
 class AdminUserSerializer(serializers.ModelSerializer):
-    reporter = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
         model = Ticket
         exclude = (
+            "reporter",
             "title",
             "comments",
         )
 
 
 class TicketSerializerCreate(serializers.ModelSerializer):
-    reporter = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    reporter = serializers.HiddenField(
+        default=serializers.CurrentUserDefault())
     status = serializers.HiddenField(default=Ticket.STATUS_CHOICES[0][0])
 
     class Meta:
@@ -64,11 +65,10 @@ class TicketSerializerAddComment(serializers.ModelSerializer):
         fields = ("comments",)
         read_only_fields = ("created_by", "assigned")
 
-
-
     def update(self, instance, validated_data):
         comments_exists = (type(instance.comments) is not NoneType)
-        id_comment = str(len(instance.comments) + 1) if comments_exists else "1"
+        id_comment = str(len(instance.comments) +
+                         1) if comments_exists else "1"
         content = validated_data.get("comments", instance.comments)
         created_by = self.context["request"].user.username
         email = self.context["request"].user.email
@@ -86,7 +86,10 @@ class TicketSerializerAddComment(serializers.ModelSerializer):
         else:
             notification_email = instance.assigned.email
             notification_username = instance.assigned.username
-        json_data = json.dumps((notification_username, notification_email), indent=4, sort_keys=True, default=str)
+        # print(notification_email, notification_username)
+
+        json_data = json.dumps(
+            (notification_username, notification_email), indent=4, sort_keys=True, default=str)
         send_email.delay(json_data)
         if comments_exists:
             instance.comments.update(comment_dict)
