@@ -12,8 +12,6 @@ class TicketSerializerUpdate(serializers.ModelSerializer):
 
     class Meta:
         model = Ticket
-        # fields = "__all__"
-        # read_only_fields = ("status", "assigned", "comments")
         exclude = (
             "title",
             "status",
@@ -27,7 +25,6 @@ class SimpleUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Ticket
-        # fields = "__all__"
         exclude = (
             "title",
             "status",
