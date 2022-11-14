@@ -40,7 +40,7 @@ services:
     restart: always
     build:
       context: .
-    command: bash -c "cd support && celery -A support worker -l info"
+    command: make go-celery-dir-and-run
     depends_on:
       - postgres
       - redis
