@@ -2,7 +2,7 @@ import datetime
 from types import NoneType
 
 from rest_framework import serializers
-from .tasks import send_email
+from .tasks import send_email_client
 from .models import Ticket
 import json
 
@@ -47,13 +47,13 @@ class AdminUserSerializer(serializers.ModelSerializer):
 class TicketSerializerCreate(serializers.ModelSerializer):
     reporter = serializers.HiddenField(
         default=serializers.CurrentUserDefault())
-    status = serializers.HiddenField(default=Ticket.STATUS_CHOICES[0][0])
 
     class Meta:
         model = Ticket
         exclude = (
             "assigned",
             "comments",
+            "status",
         )
 
 
@@ -71,29 +71,34 @@ class TicketSerializerAddComment(serializers.ModelSerializer):
                          1) if comments_exists else "1"
         content = validated_data.get("comments", instance.comments)
         created_by = self.context["request"].user.username
-        email = self.context["request"].user.email
         comment_dict = {
             id_comment: {
                 "content": content,
                 "created_at": str(datetime.datetime.now()),
-                "updated_at": str(datetime.datetime.now()),
                 "created_by": created_by,
             }
         }
-        if created_by == instance.assigned.username:
-            notification_email = instance.reporter.email
-            notification_username = instance.reporter.username
-        else:
-            notification_email = instance.assigned.email
-            notification_username = instance.assigned.username
-        # print(notification_email, notification_username)
-
-        json_data = json.dumps(
-            (notification_username, notification_email), indent=4, sort_keys=True, default=str)
-        send_email.delay(json_data)
         if comments_exists:
             instance.comments.update(comment_dict)
         else:
             instance.comments = comment_dict
         instance.save()
+
+        notify_json_data = get_notify_json_data(created_by, instance)
+        send_email_client.delay(notify_json_data)
+
         return instance
+
+
+def get_notify_json_data(comment_created_by, instance):
+    ticket_assigned = instance.assigned.username
+    if comment_created_by == ticket_assigned:
+        target_user = instance.reporter
+    else:
+        target_user = instance.assigned
+    notification_dict_data = {"email": target_user.email,
+                              "username": target_user.username,
+                              "ticket": instance.title}
+    json_data = json.dumps((notification_dict_data),
+                           indent=4, sort_keys=True, default=str)
+    return json_data
