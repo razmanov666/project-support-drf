@@ -24,10 +24,10 @@ full-migrate-and-run:
     python support/manage.py migrate && \
     python support/manage.py runserver 0.0.0.0:8000
 
-go-celery-dir-and-run:
-	cd support && \
-	celery -A support worker -l info && \
-	celery -A support beat
+# go-celery-dir-and-run:
+# 	cd support && \
+# 	celery -A support worker -l info && \
+# 	celery -A support beat
 # fake-migrate:
 # 	python support/manage.py migrate --fake
 

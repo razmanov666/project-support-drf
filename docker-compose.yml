@@ -36,12 +36,22 @@ services:
     image: redis:alpine
     ports:
       - "6379:6379"
-  celery:
+  celery-worker:
     restart: always
     build:
       context: .
-    command: make go-celery-dir-and-run
+    command: bash -c "cd support && celery -A support worker -l info"
     depends_on:
+      - postgres
+      - redis
+      - web
+  celery-beat:
+    restart: always
+    build:
+      context: .
+    command: bash -c "cd support && celery -A support beat -l info -s ./celerybeat-schedule" 
+    depends_on:
+      - celery-worker
       - postgres
       - redis
       - web

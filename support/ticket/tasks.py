@@ -15,3 +15,12 @@ def send_email_manager():
     count = Ticket.objects.filter(assigned__isnull=True).count()
     print(count)
     send_mail_tickets_without_assigned(count)
+
+@app.on_after_configure.connect
+def setup_periodic_tasks(sender, **kwargs):
+    # Calls test('hello') every 10 seconds.
+    sender.add_periodic_task(10.0, test.s('hello'))
+
+@app.task
+def test(arg):
+    print(arg)
