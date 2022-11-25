@@ -1,61 +1,53 @@
 from __future__ import annotations
-from abc import ABC, abstractmethod
+
+from abc import ABC
+from abc import abstractmethod
 
 
 class Context:
-    """
-    Контекст определяет интерфейс, представляющий интерес для клиентов. Он также
-    хранит ссылку на экземпляр подкласса Состояния, который отображает текущее
-    состояние Контекста.
-    """
 
     _state = None
-    """
-    Ссылка на текущее состояние Контекста.
-    """
 
     def __init__(self, state: State) -> None:
         self.transition_to(state)
 
     def transition_to(self, state: State):
-        """
-        Контекст позволяет изменять объект Состояния во время выполнения.
-        """
-
         print(f"Context: Transition to {type(state).__name__}")
         self._state = state
         self._state.context = self
 
-    """
-    Контекст делегирует часть своего поведения текущему объекту Состояния.
-    """
-
     def go_opened(self):
-        self._state.handle1()
+        try:
+            self._state.change_state_to_Opened()
+        except AttributeError:
+            print(f"{type(self._state).__name__} can't do 'go_opened'")
 
     def go_in_progress(self):
-        self._state.handle2()
+        try:
+            self._state.change_state_to_InProgress()
+        except AttributeError:
+            print(f"{type(self._state).__name__} can't do 'go_in_progress'")
 
     def go_done(self):
-        self._state.handle3()
-    
+        try:
+            self._state.change_state_to_Done()
+        except AttributeError:
+            print(f"{type(self._state).__name__} can't do 'go_done'")
+
     def go_rejected(self):
-        self._state.handle4()
+        try:
+            self._state.change_state_to_Rejected()
+        except AttributeError:
+            print(f"{type(self._state).__name__} can't do 'go_rejected'")
 
     def go_on_hold(self):
-        self._state.handle5()
-
-    
+        try:
+            self._state.change_state_to_OnHold()
+        except AttributeError:
+            print(f"{type(self._state).__name__} can't do 'go_on_hold'")
 
 
 class State(ABC):
-    """
-    Базовый класс Состояния объявляет методы, которые должны реализовать все
-    Конкретные Состояния, a также предоставляет обратную ссылку на объект
-    Контекст, связанный c Состоянием. Эта обратная ссылка может использоваться
-    Состояниями для передачи Контекста другому Состоянию.
-    """
-
     @property
     def context(self) -> Context:
         return self._context
@@ -64,124 +56,81 @@ class State(ABC):
     def context(self, context: Context) -> None:
         self._context = context
 
+
+class MixinGoToOpened(State):
     @abstractmethod
-    def handle1(self) -> None:
+    def change_state_to_Opened(self) -> None:
         pass
 
+
+class MixinGoInProgress(State):
     @abstractmethod
-    def handle2(self) -> None:
+    def change_state_to_InProgress(self) -> None:
         pass
 
+
+class MixinGoToDone(State):
     @abstractmethod
-    def handle3(self) -> None:
+    def change_state_to_Done(self) -> None:
         pass
 
+
+class MixinGoToRejected(State):
     @abstractmethod
-    def handle4(self) -> None:
+    def change_state_to_Rejected(self) -> None:
         pass
 
+
+class MixinGoOnHold(State):
     @abstractmethod
-    def handle5(self) -> None:
+    def change_state_to_OnHold(self) -> None:
         pass
 
 
-"""
-Конкретные Состояния реализуют различные модели поведения, связанные с
-состоянием Контекста.
-"""
-
-
-class StateOpened(State):
-    def handle1(self) -> None:
-        pass
-
-    def handle2(self) -> None:
+class StateOpened(MixinGoInProgress, MixinGoToRejected, MixinGoOnHold):
+    def change_state_to_InProgress(self) -> None:
         self.context.transition_to(StateInProgress())
 
-    def handle3(self) -> None:
-        pass
-
-    def handle4(self) -> None:
+    def change_state_to_Rejected(self) -> None:
         self.context.transition_to(StateRejected())
 
-    def handle5(self) -> None:
+    def change_state_to_OnHold(self) -> None:
         self.context.transition_to(StateOnHold())
 
 
-class StateInProgress(State):
-    def handle1(self) -> None:
+class StateInProgress(MixinGoToOpened, MixinGoToDone, MixinGoOnHold):
+    def change_state_to_Opened(self) -> None:
         self.context.transition_to(StateOpened())
 
-    def handle2(self) -> None:
-        pass
-
-    def handle3(self) -> None:
+    def change_state_to_Done(self) -> None:
         self.context.transition_to(StateDone())
 
-    def handle4(self) -> None:
-        pass
-
-    def handle5(self) -> None:
+    def change_state_to_OnHold(self) -> None:
         self.context.transition_to(StateOnHold())
 
 
-class StateDone(State):
-    def handle1(self) -> None:
+class StateDone(MixinGoToOpened):
+    def change_state_to_Opened(self) -> None:
         self.context.transition_to(StateOpened())
-    
-    def handle2(self) -> None:
-        pass
-
-    def handle3(self) -> None:
-        pass
-
-    def handle4(self) -> None:
-        pass
-
-    def handle5(self) -> None:
-        pass
 
 
-class StateRejected(State):
-    def handle1(self) -> None:
+class StateRejected(MixinGoToOpened):
+    def change_state_to_Opened(self) -> None:
         self.context.transition_to(StateOpened())
-    
-    def handle2(self) -> None:
-        pass
-
-    def handle3(self) -> None:
-        pass
-
-    def handle4(self) -> None:
-        pass
-
-    def handle5(self) -> None:
-        pass
 
 
-class StateOnHold(State):
-    def handle1(self) -> None:
-        pass
-
-    def handle2(self) -> None:
+class StateOnHold(MixinGoInProgress):
+    def change_state_to_InProgress(self) -> None:
         self.context.transition_to(StateInProgress())
-        print(type(self))
-
-    def handle3(self) -> None:
-        pass
-
-    def handle4(self) -> None:
-        pass
-
-    def handle5(self) -> None:
-        pass
 
 
 if __name__ == "__main__":
-    # Клиентский код.
-
     context = Context(StateOpened())
     context.go_in_progress()
     context.go_done()
     context.go_opened()
     context.go_done()
+    context.go_in_progress()
+    context.go_rejected()
+    context.go_opened()
+    context.go_rejected()
