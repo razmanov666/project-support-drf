@@ -2,14 +2,6 @@ from django.db import models
 from userauth.models import CustomUser
 
 
-# class Status(models.Model):
-#     opened = models.BooleanField(default=True)
-#     in_progress = models.BooleanField()
-#     done = models.BooleanField()
-#     rejected = models.BooleanField()
-#     on_hold = models.BooleanField()
-
-
 class Ticket(models.Model):
     title = models.CharField(max_length=150)
     description = models.TextField()
