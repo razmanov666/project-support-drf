@@ -16,9 +16,9 @@ app.conf.beat_shedule = {
     #     "schedule": crontab(minute="*/5"),
     # },
     "unassigned-tickets-at-the-start-of-work-day":{
-        "task": ".ticket.tasks.send_email_manager",
-        # "schedule": crontab(hour=18, minute=47 ,day_of_week='mon,tue,wed,thu,fri'),
-        "schedule": 5.0,
+        "task": "ticket.tasks.send_email_manager",
+        "schedule": crontab(hour=13, minute=20 ,day_of_week='mon,tue,wed,thu,fri'),
+        # "schedule": 5.0,
     },
 }
 

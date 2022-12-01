@@ -13,6 +13,7 @@ import os
 from datetime import timedelta
 from pathlib import Path
 from typing import List
+from distutils.util import strtobool
 
 import environ
 
@@ -29,7 +30,7 @@ environ.Env.read_env(os.path.join(BASE_DIR.parent, ".env"))
 SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = strtobool(env("DEBUG"))
 
 ALLOWED_HOSTS: List[str] = ["*"]
 
@@ -157,6 +158,7 @@ REST_FRAMEWORK = {
     ],
 }
 
+# JWT
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
@@ -184,26 +186,19 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=1),
 }
 
+# Email
 EMAIL_HOST = env("EMAIL_HOST")
 EMAIL_PORT = env("EMAIL_PORT")
 EMAIL_HOST_USER = env("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
-EMAIL_USE_TLS = env("EMAIL_USE_TLS")
-EMAIL_USE_SSL = env("EMAIL_USE_SSL")
+EMAIL_USE_TLS = strtobool(env("EMAIL_USE_TLS"))
+EMAIL_USE_SSL = strtobool(env("EMAIL_USE_SSL"))
 
-# EMAIL_HOST="smtp.mail.ru"
-# EMAIL_PORT=465
-# EMAIL_HOST_USER="app_notification@mail.ru"
-# EMAIL_HOST_PASSWORD="31M9Dyip8ePHStsMTxt0"
-# EMAIL_USE_TLS=False
-# EMAIL_USE_SSL=True
-# print(EMAIL_USE_TLS, EMAIL_USE_SSL)
 # Redis
-# REDIS_HOST = env("REDIS_HOST")
-# REDIS_PORT = env("REDIS_PORT")
-
-REDIS_HOST = "redis"
-REDIS_PORT = "6379"
+REDIS_HOST = env("REDIS_HOST")
+REDIS_PORT = env("REDIS_PORT")
+# REDIS_HOST = "redis"
+# REDIS_PORT = "6379"
 CELERY_BROKER_URL = "redis://" + REDIS_HOST + ":" + REDIS_PORT + "/0"
 CELERY_BROKER_TRANSPORT_OPTIONS = {"visability_timeout": 3600}
 CELERY_RESULT_BACKEND = "redis://" + REDIS_HOST + ":" + REDIS_PORT + "/0"
