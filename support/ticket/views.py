@@ -3,6 +3,7 @@ from django.http import Http404
 from rest_framework.generics import ListCreateAPIView
 from rest_framework.generics import RetrieveDestroyAPIView
 from rest_framework.generics import RetrieveUpdateAPIView
+from rest_framework.generics import UpdateAPIView
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 from ticket.serializers import AdminUserSerializer
@@ -63,3 +64,23 @@ class TicketAPIAddComment(TicketAPIBase, RetrieveUpdateAPIView):
     serializer_class = TicketSerializerAddComment
     permission_classes = (IsOwnerOrAdminOrSupport,)
     lookup_url_kwarg = "ticket_pk"
+
+
+class TicketAPIToOpened(TicketAPIBase, UpdateAPIView):
+    pass
+
+
+class TicketAPIToInProgress(TicketAPIBase, UpdateAPIView):
+    pass
+
+
+class TicketAPIToDone(TicketAPIBase, UpdateAPIView):
+    pass
+
+
+class TicketAPIToOnHold(TicketAPIBase, UpdateAPIView):
+    pass
+
+
+class TicketAPIToRejected(TicketAPIBase, UpdateAPIView):
+    pass
