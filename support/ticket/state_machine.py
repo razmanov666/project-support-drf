@@ -4,17 +4,20 @@ from abc import ABC
 from abc import abstractmethod
 
 
-class Context:
+class ManagerOfState:
 
     _state = None
 
     def __init__(self, state: State) -> None:
-        self.transition_to(state)
+        self.transition_to(const_dict_of_states.get(state))
 
     def transition_to(self, state: State):
-        print(f"Context: Transition to {type(state).__name__}")
+        if self._state == None:
+            print(f"ManagerOfState: Current status {type(state).__name__}")
+        else:
+            print(f"ManagerOfState: Transition to {type(state).__name__}")
         self._state = state
-        self._state.context = self
+        self._state.ManagerOfState = self
 
     def go_opened(self):
         try:
@@ -49,12 +52,12 @@ class Context:
 
 class State(ABC):
     @property
-    def context(self) -> Context:
-        return self._context
+    def ManagerOfState(self) -> ManagerOfState:
+        return self._ManagerOfState
 
-    @context.setter
-    def context(self, context: Context) -> None:
-        self._context = context
+    @ManagerOfState.setter
+    def ManagerOfState(self, ManagerOfState: ManagerOfState) -> None:
+        self._ManagerOfState = ManagerOfState
 
 
 class MixinGoToOpened(State):
@@ -88,49 +91,65 @@ class MixinGoOnHold(State):
 
 
 class StateOpened(MixinGoInProgress, MixinGoToRejected, MixinGoOnHold):
+    name_status = "OP"
+
     def change_state_to_InProgress(self) -> None:
-        self.context.transition_to(StateInProgress())
+        self.ManagerOfState.transition_to(StateInProgress())
 
     def change_state_to_Rejected(self) -> None:
-        self.context.transition_to(StateRejected())
+        self.ManagerOfState.transition_to(StateRejected())
 
     def change_state_to_OnHold(self) -> None:
-        self.context.transition_to(StateOnHold())
+        self.ManagerOfState.transition_to(StateOnHold())
 
 
 class StateInProgress(MixinGoToOpened, MixinGoToDone, MixinGoOnHold):
+    name_status = "IP"
+
     def change_state_to_Opened(self) -> None:
-        self.context.transition_to(StateOpened())
+        self.ManagerOfState.transition_to(StateOpened())
 
     def change_state_to_Done(self) -> None:
-        self.context.transition_to(StateDone())
+        self.ManagerOfState.transition_to(StateDone())
 
     def change_state_to_OnHold(self) -> None:
-        self.context.transition_to(StateOnHold())
+        self.ManagerOfState.transition_to(StateOnHold())
 
 
 class StateDone(MixinGoToOpened):
+    name_status = "DN"
+
     def change_state_to_Opened(self) -> None:
-        self.context.transition_to(StateOpened())
+        self.ManagerOfState.transition_to(StateOpened())
 
 
 class StateRejected(MixinGoToOpened):
+    name_status = "RJ"
+
     def change_state_to_Opened(self) -> None:
-        self.context.transition_to(StateOpened())
+        self.ManagerOfState.transition_to(StateOpened())
 
 
 class StateOnHold(MixinGoInProgress):
-    def change_state_to_InProgress(self) -> None:
-        self.context.transition_to(StateInProgress())
+    name_status = "OH"
 
+    def change_state_to_InProgress(self) -> None:
+        self.ManagerOfState.transition_to(StateInProgress())
+
+
+const_dict_of_states = {"OP": StateOpened(),
+                        "IP": StateInProgress(),
+                        "DN": StateDone(),
+                        "RJ": StateRejected(),
+                        "OH": StateOnHold()}
 
 if __name__ == "__main__":
-    context = Context(StateOpened())
-    context.go_in_progress()
-    context.go_done()
-    context.go_opened()
-    context.go_done()
-    context.go_in_progress()
-    context.go_rejected()
-    context.go_opened()
-    context.go_rejected()
+    ManagerOfState = ManagerOfState("IP")
+    ManagerOfState.go_opened()
+    ManagerOfState.go_done()
+    ManagerOfState.go_opened()
+    ManagerOfState.go_done()
+    ManagerOfState.go_in_progress()
+    ManagerOfState.go_rejected()
+    ManagerOfState.go_opened()
+    ManagerOfState.go_rejected()

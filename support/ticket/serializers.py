@@ -5,6 +5,7 @@ from rest_framework import serializers
 from .tasks import send_email_client
 from .models import Ticket
 import json
+from ticket.state_machine import ManagerOfState
 
 
 class TicketSerializerUpdate(serializers.ModelSerializer):
@@ -88,6 +89,52 @@ class TicketSerializerAddComment(serializers.ModelSerializer):
         send_email_client.delay(notify_json_data)
 
         return instance
+
+
+class TicketSerializerChangeStateBase(serializers.ModelSerializer):
+    class Meta:
+        model = Ticket
+        fields = ("status",)
+
+
+class TicketSerializerChangeStateGoOpened(TicketSerializerChangeStateBase):
+    def update(self, instance, validated_data):
+        current_state = ManagerOfState(instance.status)
+        current_state.go_opened()
+        instance.status = current_state._state.name_status
+        return super().update(instance, validated_data)
+
+
+class TicketSerializerChangeStateGoInProgress(TicketSerializerChangeStateBase):
+    def update(self, instance, validated_data):
+        current_state = ManagerOfState(instance.status)
+        current_state.go_in_progress()
+        instance.status = current_state._state.name_status
+        return super().update(instance, validated_data)
+
+
+class TicketSerializerChangeStateGoDone(TicketSerializerChangeStateBase):
+    def update(self, instance, validated_data):
+        current_state = ManagerOfState(instance.status)
+        current_state.go_done()
+        instance.status = current_state._state.name_status
+        return super().update(instance, validated_data)
+
+
+class TicketSerializerChangeStateGoRejected(TicketSerializerChangeStateBase):
+    def update(self, instance, validated_data):
+        current_state = ManagerOfState(instance.status)
+        current_state.go_rejected()
+        instance.status = current_state._state.name_status
+        return super().update(instance, validated_data)
+
+
+class TicketSerializerChangeStateGoOnHold(TicketSerializerChangeStateBase):
+    def update(self, instance, validated_data):
+        current_state = ManagerOfState(instance.status)
+        current_state.go_on_hold()
+        instance.status = current_state._state.name_status
+        return super().update(instance, validated_data)
 
 
 def get_notify_json_data(comment_created_by, instance):

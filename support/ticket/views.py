@@ -9,6 +9,11 @@ from rest_framework.permissions import IsAuthenticated
 from ticket.serializers import AdminUserSerializer
 from ticket.serializers import SimpleUserSerializer
 from ticket.serializers import TicketSerializerAddComment
+from ticket.serializers import TicketSerializerChangeStateGoDone
+from ticket.serializers import TicketSerializerChangeStateGoInProgress
+from ticket.serializers import TicketSerializerChangeStateGoOnHold
+from ticket.serializers import TicketSerializerChangeStateGoOpened
+from ticket.serializers import TicketSerializerChangeStateGoRejected
 from ticket.serializers import TicketSerializerCreate
 
 from .models import Ticket
@@ -22,7 +27,7 @@ class TicketAPIListPagination(PageNumberPagination):
 
 class TicketAPIBase:
     def get_queryset(self, *args, **kwargs):
-        if self.request.user.is_staff or self.request.user.is_superuser:
+        if self.request.user.role in ("MG", "AD"):
             return super().get_queryset(*args, **kwargs)
         elif not self.request.user.is_anonymous:
             return super().get_queryset(*args, **kwargs).filter(reporter=self.request.user)
@@ -66,21 +71,27 @@ class TicketAPIAddComment(TicketAPIBase, RetrieveUpdateAPIView):
     lookup_url_kwarg = "ticket_pk"
 
 
-class TicketAPIToOpened(TicketAPIBase, UpdateAPIView):
-    pass
+class TicketAPIChangeStateBase(TicketAPIBase, UpdateAPIView):
+    queryset = Ticket.objects.all()
+    permission_classes = (IsOwnerOrAdminOrSupport,)
+    lookup_url_kwarg = "ticket_pk"
 
 
-class TicketAPIToInProgress(TicketAPIBase, UpdateAPIView):
-    pass
+class TicketAPIToOpened(TicketAPIChangeStateBase):
+    serializer_class = TicketSerializerChangeStateGoOpened
 
 
-class TicketAPIToDone(TicketAPIBase, UpdateAPIView):
-    pass
+class TicketAPIToInProgress(TicketAPIChangeStateBase):
+    serializer_class = TicketSerializerChangeStateGoInProgress
 
 
-class TicketAPIToOnHold(TicketAPIBase, UpdateAPIView):
-    pass
+class TicketAPIToDone(TicketAPIChangeStateBase):
+    serializer_class = TicketSerializerChangeStateGoDone
 
 
-class TicketAPIToRejected(TicketAPIBase, UpdateAPIView):
-    pass
+class TicketAPIToOnHold(TicketAPIChangeStateBase):
+    serializer_class = TicketSerializerChangeStateGoOnHold
+
+
+class TicketAPIToRejected(TicketAPIChangeStateBase):
+    serializer_class = TicketSerializerChangeStateGoRejected
