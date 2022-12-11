@@ -1,9 +1,10 @@
 import os
+from pathlib import Path
+
 import environ
 from celery import Celery
 from celery.schedules import crontab
 
-from pathlib import Path
 env = environ.Env(DEBUG=(bool, False))
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -17,13 +18,14 @@ app.autodiscover_tasks()
 
 
 app.conf.beat_schedule = {
-    'auto-frozen': {
-        'task': 'ticket.tasks.send_email_manager',
-        'schedule': crontab(minute='*/30'),
+    "auto-frozen": {
+        "task": "ticket.tasks.autofrozen",
+        "schedule": crontab(minute="*/30"),
+        # 'schedule': 5.0,
     },
-    'send-unassigned-ticket-for-managers': {
-        'task': 'ticket.tasks.send_email_manager',
-        'schedule': crontab(minute=0, hour=9, day_of_week='mon,tue,wed,thu,fri'),
+    "send-unassigned-ticket-for-managers": {
+        "task": "ticket.tasks.send_email_manager",
+        "schedule": crontab(minute=0, hour=9, day_of_week="mon,tue,wed,thu,fri"),
     },
 }
 
