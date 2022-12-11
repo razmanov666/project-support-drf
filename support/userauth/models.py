@@ -11,6 +11,7 @@ class CustomUser(AbstractUser):
         (SD_MANAGER, "SD manager"),
         (ADMIN, "Admin"),
     ]
+    MANAGERS = (ADMIN, SD_MANAGER)
     first_name = models.CharField(max_length=255)
     second_name = models.CharField(max_length=255)
     email = models.EmailField(max_length=255)

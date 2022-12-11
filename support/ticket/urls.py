@@ -1,6 +1,7 @@
 from django.urls import path
 
 from .views import TicketAPIAddComment
+from .views import TicketAPIAssigned
 from .views import TicketAPIDestroy
 from .views import TicketAPIList
 from .views import TicketAPIToDone
@@ -9,6 +10,9 @@ from .views import TicketAPIToOnHold
 from .views import TicketAPIToOpened
 from .views import TicketAPIToRejected
 from .views import TicketAPIUpdate
+from .views import TicketFilterClosed
+from .views import TicketFilterOnHold
+from .views import TicketFilterOpened
 
 urlpatterns = [
     path("api/tickets/", TicketAPIList.as_view()),
@@ -22,7 +26,9 @@ urlpatterns = [
     path("api/tickets/<int:ticket_pk>/to_on_hold", TicketAPIToOnHold.as_view()),
     path("api/tickets/<int:ticket_pk>/to_rejected", TicketAPIToRejected.as_view()),
     # Urls for filter tickets by state
-    # path("api/tickets/opened", TicketFilterOpened.as_view()),
-    # path("api/tickets/closed", TicketFilterClosed.as_view()),
-    # path("api/tickets/on_hold", TicketFilterOnHold.as_view()),
+    path("api/tickets/opened", TicketFilterOpened.as_view()),
+    path("api/tickets/closed", TicketFilterClosed.as_view()),
+    path("api/tickets/on_hold", TicketFilterOnHold.as_view()),
+    # Url for assign the ticket
+    path("api/tickets/<int:ticket_pk>/assigned", TicketAPIAssigned.as_view()),
 ]

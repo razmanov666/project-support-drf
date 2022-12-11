@@ -1,4 +1,5 @@
 from rest_framework import permissions
+from userauth.models import CustomUser
 
 
 class IsNotAuthenticated(permissions.BasePermission):
@@ -10,12 +11,17 @@ class IsNotAuthenticated(permissions.BasePermission):
         return not bool(request.user and request.user.is_authenticated)
 
 
+class IsAdminOrSupport(permissions.BasePermission):
+    def has_object_permission(self, request, view, obj):
+        if request.user.role in CustomUser.MANAGERS:
+            return True
+        return False
+
+
 class IsOwnerOrAdminOrSupport(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         if request.method in permissions.SAFE_METHODS:
             return True
-        # print('reporter' in dir(obj))
-        # return obj.reporter == request.user or request.user.is_staff or request.user.is_superuser
         return True
 
 

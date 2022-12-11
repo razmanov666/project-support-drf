@@ -1,6 +1,8 @@
+import datetime
 import json
 import os
 from pathlib import Path
+from types import NoneType
 
 import environ
 from django.core.mail import send_mail
@@ -40,3 +42,37 @@ def send_mail_tickets_without_assigned(count: int):
 
 def send_mail_change_status_of_ticket():
     pass
+
+
+def updating_json_objects(self_obj, instance, validated_data):
+    comments_exists = type(instance.comments) is not NoneType
+    id_comment = str(len(instance.comments) + 1) if comments_exists else "1"
+    content = validated_data.get("comments", instance.comments)
+    created_by = self_obj.context["request"].user.username
+    comment_dict = {
+        id_comment: {
+            "content": content,
+            "created_at": str(datetime.datetime.now()),
+            "created_by": created_by,
+        }
+    }
+    if comments_exists:
+        instance.comments.update(comment_dict)
+    else:
+        instance.comments = comment_dict
+        instance.save()
+
+    notify_json_data = get_notify_json_data(created_by, instance)
+
+    return {"instance": instance, "json_data": notify_json_data}
+
+
+def get_notify_json_data(comment_created_by, instance):
+    ticket_assigned = instance.assigned.username
+    if comment_created_by == ticket_assigned:
+        target_user = instance.reporter
+    else:
+        target_user = instance.assigned
+    notification_dict_data = {"email": target_user.email, "username": target_user.username, "ticket": instance.title}
+    json_data = json.dumps((notification_dict_data), indent=4, sort_keys=True, default=str)
+    return json_data
