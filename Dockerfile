@@ -1,4 +1,4 @@
-FROM python:3.8.13 prod
+FROM python:3.10 as prod
 
 ENV PYTHONUNBUFFERED=1 \
     POETRY_HOME=/opt/poetry \
@@ -11,7 +11,7 @@ WORKDIR /app
 RUN apt update && \
     apt install make
 
-COPY Makefile poetry.lock pyproject.toml /app/
+COPY Makefile poetry.lock pyproject.toml .env /app/
 
 RUN curl -sSL https://install.python-poetry.org | python3 -
 
@@ -19,16 +19,17 @@ RUN make install-prod
 
 COPY support /app/support
 
-CMD make make-migrations && make migrate && make run-app
+CMD make full-migrate-and-run
 
 
-FROM prod as test
+# FROM prod as test
 
-COPY tests/ /app/tests
+# COPY tests/ /app/tests
 
-RUN make install
+# RUN make install
 
-CMD make code-style-checks && make drf-tests
+# # CMD make code-style-checks && make drf-tests
+# CMD make drf-tests
 
 
 
