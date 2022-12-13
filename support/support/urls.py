@@ -25,6 +25,7 @@ from userauth.views import RegisterView
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include("ticket.urls")),
+    path("", include("userauth.urls")),
     path("api/support-auth/", include("rest_framework.urls")),
     path("api/auth/", include("djoser.urls")),
     re_path(r"^auth/", include("djoser.urls.authtoken")),

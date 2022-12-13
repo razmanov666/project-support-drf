@@ -50,3 +50,21 @@ class RegisterSerializer(serializers.ModelSerializer):
         user.set_password(validated_data["password"])
         user.save()
         return user
+
+
+class UserSerializerChangeRole(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ("role",)
+
+
+class UserSerializerUserToAdmin(UserSerializerChangeRole):
+    role = serializers.HiddenField(default="AD")
+
+
+class UserSerializerUserToManager(UserSerializerChangeRole):
+    role = serializers.HiddenField(default="MG")
+
+
+class UserSerializerUserToClient(UserSerializerChangeRole):
+    role = serializers.HiddenField(default="CL")

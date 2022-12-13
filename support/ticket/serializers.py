@@ -1,9 +1,9 @@
+from common_modules.state_machine import ManagerOfState
 from rest_framework import serializers
 from ticket.service import updating_json_objects
 from ticket.tasks import task_send_email_client
 
 from .models import Ticket
-from support.common_modules.state_machine import ManagerOfState
 
 
 class TicketSerializerUpdate(serializers.ModelSerializer):
@@ -114,19 +114,3 @@ class TicketSerializerAssigned(serializers.ModelSerializer):
     class Meta:
         model = Ticket
         fields = ("assigned",)
-
-
-class TicketSerializerUserToAdmin(serializers.ModelSerializer):
-    role = serializers.HiddenField(default="AD")
-
-    class Meta:
-        model = Ticket
-        fields = ("role",)
-
-
-class TicketSerializerUserToManager(serializers.ModelSerializer):
-    role = serializers.HiddenField(default="MG")
-
-    class Meta:
-        model = Ticket
-        fields = ("role",)

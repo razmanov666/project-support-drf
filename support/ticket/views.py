@@ -1,4 +1,3 @@
-from common_modules.permissions import IsAdmin
 from common_modules.permissions import IsAdminOrSupport
 from common_modules.permissions import IsOwnerOrAdminOrSupport
 from django.db.models import Q
@@ -120,22 +119,9 @@ class TicketAPIAssigned(TicketAPIBase, UpdateAPIView):
     lookup_url_kwarg = "ticket_pk"
 
 
-class UserToAdmin(UpdateAPIView):
-    queryset = CustomUser.objects.filter(~Q(role="AD"))
-    permission_classes = (IsAdmin,)
-    serializer_class = TicketSerializerListForManagers
-    lookup_url_kwarg = "user_pk"
-
-
-class UserToManager(UpdateAPIView):
-    queryset = CustomUser.objects.filter(~Q(role="MG"))
-    permission_classes = (IsAdminOrSupport,)
-    serializer_class = TicketSerializerListForManagers
-    lookup_url_kwarg = "user_pk"
-
-
-class TicketAPIListInfo(ListCreateAPIView):
+class TicketAPIInfo(ListAPIView):
     queryset = Ticket.objects.all()
-    serializer_class = TicketSerializerListForManagers
     permission_classes = (IsAdminOrSupport,)
+    serializer_class = TicketSerializerListForManagers
+    pagination_class = TicketAPIListPagination
     lookup_url_kwarg = "ticket_pk"

@@ -13,9 +13,9 @@ import os
 from datetime import timedelta
 from pathlib import Path
 from typing import List
-from distutils.util import strtobool
 
 import environ
+from distutils.util import strtobool
 
 env = environ.Env(DEBUG=(bool, False))
 
@@ -50,7 +50,7 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "rest_framework_simplejwt",
     "djoser",
-    'django_celery_beat',
+    "django_celery_beat",
 ]
 
 MIDDLEWARE = [
@@ -134,7 +134,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
-STATIC_URL = "static/rest_framework/"
+STATIC_URL = "static/"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
