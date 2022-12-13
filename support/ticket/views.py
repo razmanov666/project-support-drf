@@ -1,5 +1,6 @@
-from common_permissions.permissions import IsAdminOrSupport
-from common_permissions.permissions import IsOwnerOrAdminOrSupport
+from common_modules.permissions import IsAdmin
+from common_modules.permissions import IsAdminOrSupport
+from common_modules.permissions import IsOwnerOrAdminOrSupport
 from django.db.models import Q
 from django.http import Http404
 from rest_framework.generics import ListAPIView
@@ -121,10 +122,16 @@ class TicketAPIAssigned(TicketAPIBase, UpdateAPIView):
 
 class UserToAdmin(UpdateAPIView):
     queryset = CustomUser.objects.filter(~Q(role="AD"))
+    permission_classes = (IsAdmin,)
+    serializer_class = TicketSerializerListForManagers
+    lookup_url_kwarg = "user_pk"
 
 
 class UserToManager(UpdateAPIView):
     queryset = CustomUser.objects.filter(~Q(role="MG"))
+    permission_classes = (IsAdminOrSupport,)
+    serializer_class = TicketSerializerListForManagers
+    lookup_url_kwarg = "user_pk"
 
 
 class TicketAPIListInfo(ListCreateAPIView):

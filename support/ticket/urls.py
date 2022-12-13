@@ -18,6 +18,7 @@ from .views import UserToAdmin
 from .views import UserToManager
 
 urlpatterns = [
+    # Urls for basically manage tickets
     path("api/tickets/", TicketAPIList.as_view()),
     path("api/tickets/<int:ticket_pk>/", TicketAPIUpdate.as_view()),
     path("api/tickets_list/<int:ticket_pk>/", TicketAPIListInfo.as_view()),

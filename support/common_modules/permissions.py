@@ -11,7 +11,22 @@ class IsNotAuthenticated(permissions.BasePermission):
         return not bool(request.user and request.user.is_authenticated)
 
 
+class IsAdmin(permissions.BasePermission):
+    """
+    Permissopn only for Admin
+    """
+
+    def has_object_permission(self, request, view, obj):
+        if request.user.role == "AD":
+            return True
+        return False
+
+
 class IsAdminOrSupport(permissions.BasePermission):
+    """
+    Permission for Admin or Manager
+    """
+
     def has_object_permission(self, request, view, obj):
         if request.user.role in CustomUser.MANAGERS:
             return True
@@ -19,6 +34,10 @@ class IsAdminOrSupport(permissions.BasePermission):
 
 
 class IsOwnerOrAdminOrSupport(permissions.BasePermission):
+    """
+    Permission for Admin, Manager or Owner of ticket
+    """
+
     def has_object_permission(self, request, view, obj):
         if request.method in permissions.SAFE_METHODS:
             return True
@@ -26,6 +45,10 @@ class IsOwnerOrAdminOrSupport(permissions.BasePermission):
 
 
 class IsOwner(permissions.BasePermission):
+    """
+    Permission only for Owner of ticket
+    """
+
     def has_object_permission(self, request, view, obj):
         if request.method in permissions.SAFE_METHODS:
             return True

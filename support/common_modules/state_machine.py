@@ -137,11 +137,13 @@ class StateOnHold(MixinGoInProgress):
         self.ManagerOfState.transition_to(StateInProgress())
 
 
-const_dict_of_states = {"OP": StateOpened(),
-                        "IP": StateInProgress(),
-                        "DN": StateDone(),
-                        "RJ": StateRejected(),
-                        "OH": StateOnHold()}
+const_dict_of_states = {
+    "OP": StateOpened(),
+    "IP": StateInProgress(),
+    "DN": StateDone(),
+    "RJ": StateRejected(),
+    "OH": StateOnHold(),
+}
 
 if __name__ == "__main__":
     ManagerOfState = ManagerOfState("IP")
