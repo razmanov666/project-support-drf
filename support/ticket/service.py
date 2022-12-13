@@ -92,12 +92,11 @@ def autofrozen():
             datetime_last_comment = datetime.strptime(
                 ticket.comments[list(ticket.comments.keys())[-1]].get("created_at"), "%Y-%m-%d %H:%M:%S.%f"
             )
-            print((datetime.now() - datetime_last_comment).min)
             if (datetime.now() - datetime_last_comment).days >= 7:
                 ticket.status = "OH"
                 ticket.save()
         else:
-            ticket_last_edit = ticket.created_at if ticket.created_at >= ticket.updated_at else ticket.updated_at
+            ticket_last_edit = max(ticket.created_at, ticket.updated_at)
             if (datetime.now(timezone.utc) - ticket_last_edit).days >= 7:
                 ticket.status = "OH"
                 ticket.save()
