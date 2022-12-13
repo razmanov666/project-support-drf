@@ -9,8 +9,6 @@ from rest_framework.generics import RetrieveUpdateAPIView
 from rest_framework.generics import UpdateAPIView
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
-from ticket.serializers import AdminUserSerializer
-from ticket.serializers import SimpleUserSerializer
 from ticket.serializers import TicketSerializerAddComment
 from ticket.serializers import TicketSerializerAssigned
 from ticket.serializers import TicketSerializerChangeStateGoDone
@@ -19,6 +17,8 @@ from ticket.serializers import TicketSerializerChangeStateGoOnHold
 from ticket.serializers import TicketSerializerChangeStateGoOpened
 from ticket.serializers import TicketSerializerChangeStateGoRejected
 from ticket.serializers import TicketSerializerCreate
+from ticket.serializers import TicketSerializerListForManagers
+from ticket.serializers import TicketSerializerListForUser
 from userauth.models import CustomUser
 
 from .models import Ticket
@@ -52,14 +52,7 @@ class TicketAPIUpdate(TicketAPIBase, RetrieveUpdateAPIView):
     queryset = Ticket.objects.all()
     permission_classes = (IsOwnerOrAdminOrSupport,)
     lookup_url_kwarg = "ticket_pk"
-
-    def get_serializer_class(self):
-        if self.request.user.role in CustomUser.MANAGERS:
-            return AdminUserSerializer
-        elif not self.request.user.is_anonymous:
-            return SimpleUserSerializer
-        else:
-            raise Http404
+    serializer_class = TicketSerializerListForUser
 
 
 class TicketAPIDestroy(TicketAPIBase, RetrieveDestroyAPIView):
@@ -121,7 +114,21 @@ class TicketFilterClosed(TicketFilter):
 
 class TicketAPIAssigned(TicketAPIBase, UpdateAPIView):
     queryset = Ticket.objects.filter(assigned__isnull=True)
-    print(queryset)
     serializer_class = TicketSerializerAssigned
+    permission_classes = (IsAdminOrSupport,)
+    lookup_url_kwarg = "ticket_pk"
+
+
+class UserToAdmin(UpdateAPIView):
+    queryset = CustomUser.objects.filter(~Q(role="AD"))
+
+
+class UserToManager(UpdateAPIView):
+    queryset = CustomUser.objects.filter(~Q(role="MG"))
+
+
+class TicketAPIListInfo(ListCreateAPIView):
+    queryset = Ticket.objects.all()
+    serializer_class = TicketSerializerListForManagers
     permission_classes = (IsAdminOrSupport,)
     lookup_url_kwarg = "ticket_pk"

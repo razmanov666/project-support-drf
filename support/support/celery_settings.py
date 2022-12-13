@@ -19,13 +19,13 @@ app.autodiscover_tasks()
 
 app.conf.beat_schedule = {
     "auto-frozen": {
-        "task": "ticket.tasks.autofrozen",
-        "schedule": crontab(minute="*/30"),
-        # 'schedule': 5.0,
+        "task": "ticket.tasks.task_autofrozen",
+        # "schedule": crontab(minute="*/1"),
+        "schedule": 10.0,
     },
     "send-unassigned-ticket-for-managers": {
         "task": "ticket.tasks.send_email_manager",
-        "schedule": crontab(minute=0, hour=9, day_of_week="mon,tue,wed,thu,fri"),
+        "schedule": crontab(minute=0, hour=9),
     },
 }
 

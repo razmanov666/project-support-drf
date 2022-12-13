@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from ticket.service import updating_json_objects
 from ticket.state_machine import ManagerOfState
-from ticket.tasks import send_email_client
+from ticket.tasks import task_send_email_client
 
 from .models import Ticket
 
@@ -18,7 +18,7 @@ class TicketSerializerUpdate(serializers.ModelSerializer):
         )
 
 
-class SimpleUserSerializer(serializers.ModelSerializer):
+class TicketSerializerListForUser(serializers.ModelSerializer):
     class Meta:
         model = Ticket
         exclude = (
@@ -30,15 +30,10 @@ class SimpleUserSerializer(serializers.ModelSerializer):
         )
 
 
-class AdminUserSerializer(serializers.ModelSerializer):
+class TicketSerializerListForManagers(serializers.ModelSerializer):
     class Meta:
         model = Ticket
-        exclude = (
-            "description",
-            "reporter",
-            "title",
-            "comments",
-        )
+        fields = "__all__"
 
 
 class TicketSerializerCreate(serializers.ModelSerializer):
@@ -63,7 +58,7 @@ class TicketSerializerAddComment(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         data = updating_json_objects(self, instance, validated_data)
-        send_email_client.delay(data.get("json_data"))
+        task_send_email_client.delay(data.get("json_data"))
         return data["instance"]
 
 
