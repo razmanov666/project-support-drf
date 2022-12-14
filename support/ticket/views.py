@@ -127,7 +127,6 @@ class TicketAPIInfo(ListAPIView):
     permission_classes = (IsAdminOrSupport,)
     serializer_class = TicketSerializerListForManagers
     pagination_class = TicketAPIListPagination
-    lookup_url_kwarg = "ticket_pk"
 
 
 # Classes for filtering tickets
