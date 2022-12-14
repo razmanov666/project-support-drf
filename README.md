@@ -4,6 +4,12 @@
 * [Technologies](#technologies)
 * [Setup](#setup)
 * [Usage](#urls-for-working)
+## General info
+Customer support service:
+1) User writes a ticket and sends it.
+2) The helpdesk sees solved, unresolved and frozen tickets (all according to the fact) and can respond to them.
+3) The user can view the response of the helpdesk and add a new message (helpdesk responds to it).
+4) Support can change the status of tickets.
 ## Technologies
 Project is created with:
 * python = "^3.10"
@@ -18,6 +24,7 @@ Project is created with:
 To run this project, install it locally using npm:
 
 ```
+$ git clone https://github.com/razmanov666/project-support-drf.git
 $ cd project-support-drf
 $ docker-compose up --build
 ```
