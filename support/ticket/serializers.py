@@ -1,21 +1,27 @@
+import json
+
 from common_modules.state_machine import ManagerOfState
 from rest_framework import serializers
 from ticket.service import updating_json_objects
+from ticket.tasks import task_send_email_about_cnahge_status
 from ticket.tasks import task_send_email_client
 
 from .models import Ticket
 
 
-class TicketSerializerUpdate(serializers.ModelSerializer):
-    class Meta:
-        model = Ticket
-        exclude = (
-            "reporter",
-            "title",
-            "status",
-            "assigned",
-            "comments",
-        )
+# class TicketSerializerUpdate(serializers.ModelSerializer):
+#     """
+#     Serialiser for update tickets by user. If user want to edit description of ticket
+#     """
+#     class Meta:
+#         model = Ticket
+#         exclude = (
+#             "reporter",
+#             "title",
+#             "status",
+#             "assigned",
+#             "comments",
+#         )
 
 
 class TicketSerializerListForUser(serializers.ModelSerializer):
@@ -37,6 +43,10 @@ class TicketSerializerListForManagers(serializers.ModelSerializer):
 
 
 class TicketSerializerCreate(serializers.ModelSerializer):
+    """
+    Serializer for create a new ticket.
+    """
+
     reporter = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
@@ -49,6 +59,10 @@ class TicketSerializerCreate(serializers.ModelSerializer):
 
 
 class TicketSerializerAddComment(serializers.ModelSerializer):
+    """
+    Serializer for create a new comment for ticket.
+    """
+
     comments = serializers.CharField(label="Comment")
 
     class Meta:
@@ -62,53 +76,32 @@ class TicketSerializerAddComment(serializers.ModelSerializer):
         return data["instance"]
 
 
-class TicketSerializerChangeStateBase(serializers.ModelSerializer):
+class TicketSerializerChangeState(serializers.ModelSerializer):
+    """
+    Serializer for changing status (state) of ticket. Only for Admins and Managers.
+    """
+
     class Meta:
         model = Ticket
         fields = ("status",)
 
-
-class TicketSerializerChangeStateGoOpened(TicketSerializerChangeStateBase):
     def update(self, instance, validated_data):
         current_state = ManagerOfState(instance.status)
-        current_state.go_opened()
+        data = {"old_status": current_state._state.full_name_status, "email": instance.reporter.email}
+        changed_status = eval(f"current_state.{self.context.get('method')}")
         instance.status = current_state._state.name_status
-        return super().update(instance, validated_data)
-
-
-class TicketSerializerChangeStateGoInProgress(TicketSerializerChangeStateBase):
-    def update(self, instance, validated_data):
-        current_state = ManagerOfState(instance.status)
-        current_state.go_in_progress()
-        instance.status = current_state._state.name_status
-        return super().update(instance, validated_data)
-
-
-class TicketSerializerChangeStateGoDone(TicketSerializerChangeStateBase):
-    def update(self, instance, validated_data):
-        current_state = ManagerOfState(instance.status)
-        current_state.go_done()
-        instance.status = current_state._state.name_status
-        return super().update(instance, validated_data)
-
-
-class TicketSerializerChangeStateGoRejected(TicketSerializerChangeStateBase):
-    def update(self, instance, validated_data):
-        current_state = ManagerOfState(instance.status)
-        current_state.go_rejected()
-        instance.status = current_state._state.name_status
-        return super().update(instance, validated_data)
-
-
-class TicketSerializerChangeStateGoOnHold(TicketSerializerChangeStateBase):
-    def update(self, instance, validated_data):
-        current_state = ManagerOfState(instance.status)
-        current_state.go_on_hold()
-        instance.status = current_state._state.name_status
+        data.update({"status": current_state._state.full_name_status})
+        data_json = json.dumps((data), indent=4, sort_keys=True, default=str)
+        if changed_status:
+            task_send_email_about_cnahge_status.delay(data_json)
         return super().update(instance, validated_data)
 
 
 class TicketSerializerAssigned(serializers.ModelSerializer):
+    """
+    Serializer for assigning a ticket on a user. Only for Admins and Managers.
+    """
+
     assigned = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:

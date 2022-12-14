@@ -11,11 +11,7 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 from ticket.serializers import TicketSerializerAddComment
 from ticket.serializers import TicketSerializerAssigned
-from ticket.serializers import TicketSerializerChangeStateGoDone
-from ticket.serializers import TicketSerializerChangeStateGoInProgress
-from ticket.serializers import TicketSerializerChangeStateGoOnHold
-from ticket.serializers import TicketSerializerChangeStateGoOpened
-from ticket.serializers import TicketSerializerChangeStateGoRejected
+from ticket.serializers import TicketSerializerChangeState
 from ticket.serializers import TicketSerializerCreate
 from ticket.serializers import TicketSerializerListForManagers
 from ticket.serializers import TicketSerializerListForUser
@@ -31,8 +27,12 @@ class TicketAPIListPagination(PageNumberPagination):
 
 
 class TicketAPIBase:
+    """
+    Abstract class with get_queryset for owners of tickets or for Managers and Admins.
+    """
+
     def get_queryset(self, *args, **kwargs):
-        if self.request.user.role in CustomUser.MANAGERS:
+        if not self.request.user.is_anonymous and self.request.user.role in CustomUser.MANAGERS:
             return super().get_queryset(*args, **kwargs)
         elif not self.request.user.is_anonymous:
             return super().get_queryset(*args, **kwargs).filter(reporter=self.request.user)
@@ -73,29 +73,66 @@ class TicketAPIChangeStateBase(TicketAPIBase, UpdateAPIView):
     queryset = Ticket.objects.all()
     permission_classes = (IsAdminOrSupport,)
     lookup_url_kwarg = "ticket_pk"
+    serializer_class = TicketSerializerChangeState
 
 
 class TicketAPIToOpened(TicketAPIChangeStateBase):
-    serializer_class = TicketSerializerChangeStateGoOpened
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context["method"] = "go_opened()"
+        return context
 
 
 class TicketAPIToInProgress(TicketAPIChangeStateBase):
-    serializer_class = TicketSerializerChangeStateGoInProgress
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context["method"] = "go_in_progress()"
+        return context
 
 
 class TicketAPIToDone(TicketAPIChangeStateBase):
-    serializer_class = TicketSerializerChangeStateGoDone
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context["method"] = "go_done()"
+        return context
 
 
 class TicketAPIToOnHold(TicketAPIChangeStateBase):
-    serializer_class = TicketSerializerChangeStateGoOnHold
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context["method"] = "go_on_hold()"
+        return context
 
 
 class TicketAPIToRejected(TicketAPIChangeStateBase):
-    serializer_class = TicketSerializerChangeStateGoRejected
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context["method"] = "go_rejected()"
+        return context
 
 
+class TicketAPIAssigned(TicketAPIBase, UpdateAPIView):
+    queryset = Ticket.objects.filter(assigned__isnull=True)
+    serializer_class = TicketSerializerAssigned
+    permission_classes = (IsAdminOrSupport,)
+    lookup_url_kwarg = "ticket_pk"
+
+
+class TicketAPIInfo(ListAPIView):
+    """
+    Class for get full info about tickets.
+    """
+
+    queryset = Ticket.objects.all()
+    permission_classes = (IsAdminOrSupport,)
+    serializer_class = TicketSerializerListForManagers
+    pagination_class = TicketAPIListPagination
+    lookup_url_kwarg = "ticket_pk"
+
+
+# Classes for filtering tickets
 class TicketFilter(TicketAPIBase, ListAPIView):
+    pagination_class = TicketAPIListPagination
     serializer_class = TicketSerializerCreate
     permission_classes = (IsOwnerOrAdminOrSupport,)
 
@@ -110,18 +147,3 @@ class TicketFilterOnHold(TicketFilter):
 
 class TicketFilterClosed(TicketFilter):
     queryset = Ticket.objects.filter(Q(status="RJ") | Q(status="DN"))
-
-
-class TicketAPIAssigned(TicketAPIBase, UpdateAPIView):
-    queryset = Ticket.objects.filter(assigned__isnull=True)
-    serializer_class = TicketSerializerAssigned
-    permission_classes = (IsAdminOrSupport,)
-    lookup_url_kwarg = "ticket_pk"
-
-
-class TicketAPIInfo(ListAPIView):
-    queryset = Ticket.objects.all()
-    permission_classes = (IsAdminOrSupport,)
-    serializer_class = TicketSerializerListForManagers
-    pagination_class = TicketAPIListPagination
-    lookup_url_kwarg = "ticket_pk"

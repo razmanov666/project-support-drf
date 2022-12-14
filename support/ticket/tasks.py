@@ -1,4 +1,5 @@
 from ticket.service import autofrozen
+from ticket.service import send_mail_change_status_of_ticket
 from ticket.service import send_mail_tickets_without_assigned
 from ticket.service import send_mail_update_comments
 
@@ -18,3 +19,8 @@ def task_autofrozen():
 @app.task
 def task_send_email_manager():
     send_mail_tickets_without_assigned()
+
+
+@app.task
+def task_send_email_about_cnahge_status(object):
+    send_mail_change_status_of_ticket(object)

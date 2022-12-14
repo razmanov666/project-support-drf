@@ -17,7 +17,7 @@ class IsAdmin(permissions.BasePermission):
     """
 
     def has_object_permission(self, request, view, obj):
-        if request.user.role == "AD":
+        if not request.user.is_anonymous and request.user.role == "AD":
             return True
         return False
 
@@ -28,7 +28,7 @@ class IsAdminOrSupport(permissions.BasePermission):
     """
 
     def has_object_permission(self, request, view, obj):
-        if request.user.role in CustomUser.MANAGERS:
+        if not request.user.is_anonymous and request.user.role in CustomUser.MANAGERS:
             return True
         return False
 
