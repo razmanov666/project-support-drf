@@ -5,6 +5,9 @@ from abc import abstractmethod
 
 
 class ManagerOfState:
+    """
+    State machine for managing state of tickets
+    """
 
     _state = None
 
@@ -22,32 +25,42 @@ class ManagerOfState:
     def go_opened(self):
         try:
             self._state.change_state_to_Opened()
+            return True
         except AttributeError:
             print(f"{type(self._state).__name__} can't do 'go_opened'")
+            return False
 
     def go_in_progress(self):
         try:
             self._state.change_state_to_InProgress()
+            return True
         except AttributeError:
             print(f"{type(self._state).__name__} can't do 'go_in_progress'")
+            return False
 
     def go_done(self):
         try:
             self._state.change_state_to_Done()
+            return True
         except AttributeError:
             print(f"{type(self._state).__name__} can't do 'go_done'")
+            return False
 
     def go_rejected(self):
         try:
             self._state.change_state_to_Rejected()
+            return True
         except AttributeError:
             print(f"{type(self._state).__name__} can't do 'go_rejected'")
+            return False
 
     def go_on_hold(self):
         try:
             self._state.change_state_to_OnHold()
+            return True
         except AttributeError:
             print(f"{type(self._state).__name__} can't do 'go_on_hold'")
+            return False
 
 
 class State(ABC):
@@ -92,6 +105,7 @@ class MixinGoOnHold(State):
 
 class StateOpened(MixinGoInProgress, MixinGoToRejected, MixinGoOnHold):
     name_status = "OP"
+    full_name_status = "Opened"
 
     def change_state_to_InProgress(self) -> None:
         self.ManagerOfState.transition_to(StateInProgress())
@@ -105,6 +119,7 @@ class StateOpened(MixinGoInProgress, MixinGoToRejected, MixinGoOnHold):
 
 class StateInProgress(MixinGoToOpened, MixinGoToDone, MixinGoOnHold):
     name_status = "IP"
+    full_name_status = "In progress"
 
     def change_state_to_Opened(self) -> None:
         self.ManagerOfState.transition_to(StateOpened())
@@ -118,6 +133,7 @@ class StateInProgress(MixinGoToOpened, MixinGoToDone, MixinGoOnHold):
 
 class StateDone(MixinGoToOpened):
     name_status = "DN"
+    full_name_status = "Done"
 
     def change_state_to_Opened(self) -> None:
         self.ManagerOfState.transition_to(StateOpened())
@@ -125,6 +141,7 @@ class StateDone(MixinGoToOpened):
 
 class StateRejected(MixinGoToOpened):
     name_status = "RJ"
+    full_name_status = "Rejected"
 
     def change_state_to_Opened(self) -> None:
         self.ManagerOfState.transition_to(StateOpened())
@@ -132,6 +149,7 @@ class StateRejected(MixinGoToOpened):
 
 class StateOnHold(MixinGoInProgress):
     name_status = "OH"
+    full_name_status = "On hold"
 
     def change_state_to_InProgress(self) -> None:
         self.ManagerOfState.transition_to(StateInProgress())
